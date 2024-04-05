@@ -7,7 +7,8 @@ namespace SeaBattles.Console.States.Game
 	{
 		private const string REGEX_SAVE_AND_EXIT = "^uloz$";
 		private const string REGEX_USE_HINT = "^nap$";
-		private const string REGEX_MOVE = @"^[a-z]\d{1,2}$";
+		private const string REGEX_MOVE = @"^[a-zA-Z]\s*\d{1,2}$";
+		private const string REGEX_EXIT = @"^konc$";
 
 		private readonly Engine _engine;
 		private readonly InputHandler _inputHandler;
@@ -25,7 +26,7 @@ namespace SeaBattles.Console.States.Game
 		{
 			Draw();
 
-			var input = System.Console.ReadLine() ?? string.Empty;
+			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
 			_inputHandler.Handle(input);
 		}
@@ -38,11 +39,12 @@ namespace SeaBattles.Console.States.Game
 
 			var moveStr = "====    Vas tah    ====";
 
-			var addStr = $"   Pokud chcete ulozit a ukoncit hru, zadejte \'uloz\'.";
+			var saveTipStr = $"   Pokud chcete ulozit a ukoncit hru, zadejte \'uloz\'.";
+			var exitTipStr = "   Pokud chcete ukoncit hru, zadejte \'konc\'.";
 
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '='));
-			System.Console.WriteLine(moveStr + addStr);
-			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '='));
+			System.Console.WriteLine(moveStr + saveTipStr);
+			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '=') + exitTipStr);
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"Napovedy: {_engine.RemainingHintCount}. Pis \'nap\'");
@@ -133,7 +135,7 @@ namespace SeaBattles.Console.States.Game
 		{
 
 
-			//_engine.SetState(new PlayerMoveState(_engine));
+			_engine.SetState(null);
 		}
 
 		private void UseHint()
@@ -149,6 +151,11 @@ namespace SeaBattles.Console.States.Game
 			//_engine.SetState(new PlayerMoveState(_engine));
 		}
 
+		private void Exit()
+		{
+			_engine.SetState(null);
+		}
+
 		#endregion
 
 		#region Initialization
@@ -158,6 +165,7 @@ namespace SeaBattles.Console.States.Game
 			_inputHandler.Add(REGEX_MOVE, TakeMove);
 			_inputHandler.Add(REGEX_USE_HINT, (_) => { UseHint(); });
 			_inputHandler.Add(REGEX_SAVE_AND_EXIT, (_) => { SaveAndExit(); });
+			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 		}
 
 		#endregion
