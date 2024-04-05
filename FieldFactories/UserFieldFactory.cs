@@ -1,4 +1,5 @@
 ﻿using SeaBattles.Console.FieldFillers;
+using SeaBattles.Console.Input;
 using SeaBattles.Console.Misc;
 using SeaBattles.Console.Models;
 
@@ -8,36 +9,41 @@ namespace SeaBattles.Console.FieldFactories
 {
     internal class UserFieldFactory : IFieldFactory
     {
+		private const string REGEX_SHIP = @"^[a-zA-Z]\s*\d{1,2}\s*[sv]\s*[lmst]$";
+		private const string REGEX_CLEAR = "^smaz$";
+		private const string REGEX_EXIT = "^konc$";
+		private const string REGEX_CONTINUE = "^.*$";
+
+		private readonly InputHandler _inputHandler = new();
+
+		private FieldFiller _filler;
+		private FieldSetup _fieldSetup;
+
+		private volatile bool _canBuild = false;
+
+		public UserFieldFactory()
+		{
+			InitInputHandler();
+		}
+
         public BattleField CreateBattlefield(FieldSetup setup)
         {
-            Start:
+			_fieldSetup = setup;
+            _filler = FieldFillerFactory.Create(setup.Size);
 
-            var filler = FieldFillerFactory.Create(setup.Size);
-
-			while(true)
+			while(!_canBuild)
 			{
-				Draw(filler);
+				Draw(_filler);
 
-				if (!filler.AvailableShips.Any())
-				{
-					if (!AskToContinue())
-						goto Start;
+				var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
-					return filler.Build();
-				}
-
-				var str = System.Console.ReadLine();
-
-				if (str.Equals("smaz"))
-					goto Start;
-
-				if (ShipCoordinateParser.TryParse(str, filler.Size, out var x, out var y,
-					out var direction, out var shipSize))
-				{
-					filler.PutShip(x, y, shipSize, direction);
-				}
+				_inputHandler.Handle(input);
 			}
-        }
+
+			return _filler.Build();
+		}
+
+		#region Drawing
 
 		private static void Draw(FieldFiller filler)
 		{
@@ -68,6 +74,15 @@ namespace SeaBattles.Console.FieldFactories
 
 			System.Console.WriteLine("Pokud chcete vycistit plochu, zadejte \'smaz\'.");
 			System.Console.WriteLine();
+
+			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
+			System.Console.WriteLine();
+
+			if (filler.AvailableShips.Any())
+				return;
+
+			System.Console.WriteLine();
+			System.Console.WriteLine("Pokracujte stiskem cokoliv jineho.");
 		}
 
 		private static void PrintAvailableShips(FieldFiller filler)
@@ -97,17 +112,46 @@ namespace SeaBattles.Console.FieldFactories
             System.Console.WriteLine();
         }
 
-		private static bool AskToContinue()
+		#endregion
+
+		#region Input handlers
+
+		private void PutShip(string input)
 		{
-			System.Console.WriteLine();
-			System.Console.WriteLine("Pokracujte stiskem cokoliv jineho.");
-
-			var str = System.Console.ReadLine();
-
-			if (str.Equals("smaz"))
-				return false;
-
-			return true;
+			if (ShipCoordinateParser.TryParse(input, _filler.Size, out var x, out var y,
+					out var direction, out var shipSize))
+			{
+				_filler.PutShip(x, y, shipSize, direction);
+			}
 		}
-    }
+
+		private void ClearField()
+		{
+			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
+		}
+
+		private void BuildField()
+		{
+			_canBuild = true;
+		}
+
+		private void Exit()
+		{
+
+		}
+
+		#endregion
+
+		#region Initialization
+
+		private void InitInputHandler()
+		{
+			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
+			_inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });
+			_inputHandler.Add(REGEX_SHIP, PutShip);
+			_inputHandler.Add(REGEX_CONTINUE, (_) => { BuildField(); });
+		}
+
+		#endregion
+	}
 }
