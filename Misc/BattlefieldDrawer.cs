@@ -7,12 +7,13 @@
         private const char CELL_ATTACKED = '҉';
         private const char CELL_DESTROYED = '†';
 
-        internal static void Draw(BattleField field, bool hideShips = false)
+        internal static void Draw(BattleField field, bool hideShips = false, List<(int,int)>? hints = null)
         {
-            Draw(field.Field, field.Size, hideShips);
+            Draw(field.Field, field.Size, hideShips, hints);
         }
 
-        internal static void Draw(CellState[,] field, int size, bool hideShips = false)
+        internal static void Draw(CellState[,] field, int size, bool hideShips = false,
+            List<(int, int)>? hints = null)
         {
             //var size = size;
 
@@ -36,7 +37,16 @@
                             System.Console.Write(CELL_EMPTY);
                             break;
                         case CellState.Ship:
-                            System.Console.Write(hideShips ? CELL_EMPTY : CELL_SHIP);
+                            if (hideShips && (hints is null || !hints.Contains((i, j))))
+                            {
+								System.Console.Write(CELL_EMPTY);
+							}
+                            else
+                            {
+                                System.Console.Write(CELL_SHIP);
+							}
+
+                            //System.Console.Write(hideShips ? CELL_EMPTY : CELL_SHIP);
                             break;
                         case CellState.Attacked:
                             System.Console.Write(CELL_ATTACKED);

@@ -70,5 +70,30 @@
 			if (--_ships[number] <= 0)
 				_ships.Remove(number);
 		}
+
+		public (int, int)? GetRandomShipCell()
+		{
+			if (ShipCellCount == 0)
+				return null;
+
+			var rand = new Random();
+			var cellNumber = rand.Next(0, ShipCellCount);
+
+			var iter = 0;
+
+			for(int i = 0; i < Size; i++)
+			{
+				for(int j = 0; j < Size; j++)
+				{
+					if (Field[i, j] == CellState.Ship)
+					{
+						if (iter++ == cellNumber)
+							return (i, j);
+					}
+				}
+			}
+
+			return null;
+		}
 	}
 }
