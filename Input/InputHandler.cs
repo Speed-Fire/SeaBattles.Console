@@ -14,6 +14,11 @@
 			Add(new InputToken(regex, action));
 		}
 
+		public void Remove(InputToken token)
+		{
+			_tokens.Remove(token);
+		}
+
 		public bool Handle(string input)
 		{
 			foreach (var token in _tokens)
