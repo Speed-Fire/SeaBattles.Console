@@ -14,13 +14,15 @@
 			Add(new InputToken(regex, action));
 		}
 
-		public void Handle(string input)
+		public bool Handle(string input)
 		{
 			foreach (var token in _tokens)
 			{
 				if (token.DoIfMatch(input))
-					return;
+					return true;
 			}
+
+			return false;
 		}
 	}
 }
