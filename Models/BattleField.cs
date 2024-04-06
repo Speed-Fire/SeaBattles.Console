@@ -4,10 +4,11 @@
 	{
 		public CellState[,] Field { get; }
 		public int Size { get; }
-		public int ShipCellCount { get; private set; } // count of cells with ships: a 4-long ship is 4 cells
 		public int ShipCount => _ships.Count;
 		public bool IsEmpty => //ShipCellCount == 0; 
 			ShipCount == 0;
+
+		private int ShipCellCount { get; set; } // count of cells with ships: a 4-long ship is 4 cells
 
 		private readonly Dictionary<int, int> _ships;
 		private readonly int[,] _shipCountField;
@@ -21,6 +22,8 @@
 			_ships = ships;
 
 			Size = size;
+
+			ShipCellCount = CalculateShipCellCount();
 		}
 
 		public CellState this[int x, int y]
@@ -58,6 +61,31 @@
 			return AttackResult.Failed;
 		}
 
+		internal (int, int)? GetRandomShipCell()
+		{
+			if (ShipCellCount == 0)
+				return null;
+
+			var rand = new Random();
+			var cellNumber = rand.Next(0, ShipCellCount);
+
+			var iter = 0;
+
+			for (int i = 0; i < Size; i++)
+			{
+				for (int j = 0; j < Size; j++)
+				{
+					if (Field[i, j] == CellState.Ship)
+					{
+						if (iter++ == cellNumber)
+							return (i, j);
+					}
+				}
+			}
+
+			return null;
+		}
+
 		private void RecalculateShipCount(uint x, uint y)
 		{
 			var number = _shipCountField[x, y];
@@ -71,29 +99,20 @@
 				_ships.Remove(number);
 		}
 
-		public (int, int)? GetRandomShipCell()
+		private int CalculateShipCellCount()
 		{
-			if (ShipCellCount == 0)
-				return null;
-
-			var rand = new Random();
-			var cellNumber = rand.Next(0, ShipCellCount);
-
-			var iter = 0;
+			var res = 0;
 
 			for(int i = 0; i < Size; i++)
 			{
 				for(int j = 0; j < Size; j++)
 				{
 					if (Field[i, j] == CellState.Ship)
-					{
-						if (iter++ == cellNumber)
-							return (i, j);
-					}
+						res++;
 				}
 			}
 
-			return null;
+			return res;
 		}
 	}
 }
