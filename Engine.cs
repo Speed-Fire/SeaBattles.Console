@@ -1,5 +1,5 @@
 ﻿using SeaBattles.Console.States;
-using SeaBattles.Console.States.Game;
+using SeaBattles.Console.States.Engine;
 
 namespace SeaBattles.Console
 {

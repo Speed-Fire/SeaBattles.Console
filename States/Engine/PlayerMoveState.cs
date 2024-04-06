@@ -1,7 +1,7 @@
 ﻿using SeaBattles.Console.Input;
 using SeaBattles.Console.Misc;
 
-namespace SeaBattles.Console.States.Game
+namespace SeaBattles.Console.States.Engine
 {
 	internal class PlayerMoveState : IState
 	{
@@ -10,10 +10,10 @@ namespace SeaBattles.Console.States.Game
 		private const string REGEX_MOVE = @"^[a-zA-Z]\s*\d{1,2}$";
 		private const string REGEX_EXIT = @"^konc$";
 
-		private readonly Engine _engine;
+		private readonly Console.Engine _engine;
 		private readonly InputHandler _inputHandler;
 
-		public PlayerMoveState(Engine engine)
+		public PlayerMoveState(Console.Engine engine)
 		{
 			_engine = engine;
 
@@ -75,7 +75,7 @@ namespace SeaBattles.Console.States.Game
 		{
 			if (!ShipCoordinateParser.TryParse(input, _engine.CompField.Size, out var x, out var y))
 			{
-				_engine.StateMsg = Engine.MSG_BAD_INPUT;
+				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
 				//_engine.SetState(new PlayerMoveState(_engine));
 
@@ -85,7 +85,7 @@ namespace SeaBattles.Console.States.Game
 			if (_engine.CompField[x, y] == CellState.Attacked ||
 				_engine.CompField[x, y] == CellState.Destroyed)
 			{
-				_engine.StateMsg = Engine.MSG_BAD_INPUT;
+				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
 				//_engine.SetState(new PlayerMoveState(_engine));
 
@@ -105,25 +105,25 @@ namespace SeaBattles.Console.States.Game
 			{
 				case AttackResult.Failed:
 				default:
-					_engine.StateMsg = Engine.MSG_BAD_INPUT;
+					_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
 					//_engine.SetState(new PlayerMoveState(_engine));
 
 					return;
 				case AttackResult.Missed:
-					_engine.StateMsg = Engine.MSG_FIRE_MISSED;
+					_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
 					_engine.SetState(new PlayerMoveResultState(_engine));
 
 					return;
 				case AttackResult.Hitten:
-					_engine.StateMsg = Engine.MSG_SHIP_HIT;
+					_engine.StateMsg = Console.Engine.MSG_SHIP_HIT;
 
 					//_engine.SetState(new PlayerMoveState(_engine));
 
 					return;
 				case AttackResult.Destroyed:
-					_engine.StateMsg = Engine.MSG_SHIP_DESTROYED;
+					_engine.StateMsg = Console.Engine.MSG_SHIP_DESTROYED;
 
 					//_engine.SetState(new PlayerMoveState(_engine));
 

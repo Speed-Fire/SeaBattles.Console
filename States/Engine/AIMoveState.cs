@@ -1,15 +1,15 @@
 ﻿using SeaBattles.Console.Misc;
 
-namespace SeaBattles.Console.States.Game
+namespace SeaBattles.Console.States.Engine
 {
 	internal class AIMoveState : IState
 	{
 		private const int AI_MIN_THINKING_DURATION = 1000;
 		private const int AI_MAX_THINKING_DURATION = 5000;
 
-		private readonly Engine _engine;
+		private readonly Console.Engine _engine;
 
-		public AIMoveState(Engine engine)
+		public AIMoveState(Console.Engine engine)
 		{
 			_engine = engine;
 		}
@@ -100,25 +100,25 @@ namespace SeaBattles.Console.States.Game
 				{
 					case AttackResult.Failed:
 					default:
-						_engine.StateMsg = Engine.MSG_BAD_INPUT;
+						_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
 						//_engine.SetState(new AIMoveState(_engine));
 
 						return;
 					case AttackResult.Missed:
-						_engine.StateMsg = Engine.MSG_FIRE_MISSED;
+						_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
 						_engine.SetState(new AIMoveResultState(_engine));
 
 						return;
 					case AttackResult.Hitten:
-						_engine.StateMsg = Engine.MSG_SHIP_HIT;
+						_engine.StateMsg = Console.Engine.MSG_SHIP_HIT;
 
 						//_engine.SetState(new AIMoveState(_engine));
 
 						return;
 					case AttackResult.Destroyed:
-						_engine.StateMsg = Engine.MSG_SHIP_DESTROYED;
+						_engine.StateMsg = Console.Engine.MSG_SHIP_DESTROYED;
 
 						//_engine.SetState(new AIMoveState(_engine));
 						

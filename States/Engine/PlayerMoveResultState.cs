@@ -1,12 +1,12 @@
 ﻿using SeaBattles.Console.Misc;
 
-namespace SeaBattles.Console.States.Game
+namespace SeaBattles.Console.States.Engine
 {
 	internal class PlayerMoveResultState : IState
 	{
-		private readonly Engine _engine;
+		private readonly Console.Engine _engine;
 
-		public PlayerMoveResultState(Engine engine)
+		public PlayerMoveResultState(Console.Engine engine)
 		{
 			_engine = engine;
 		}

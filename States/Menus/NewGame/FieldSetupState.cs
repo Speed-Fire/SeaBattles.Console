@@ -1,17 +1,17 @@
 ﻿using SeaBattles.Console.Models;
 
-namespace SeaBattles.Console
+namespace SeaBattles.Console.States.Menus
 {
-	internal class FieldSetuper
+	internal class FieldSetupState : IState
 	{
+		private readonly Game _game;
+
 		private const int MIN_FIELD_SIZE = 7;
 		private const int MAX_FIELD_SIZE = 15;
 
-		public static FieldSetup GetSetup()
+		public FieldSetupState(Game game)
 		{
-			var size = GetSize();
-
-			return new FieldSetup(size);
+			_game = game;
 		}
 
 		private static int GetSize()
@@ -37,6 +37,13 @@ namespace SeaBattles.Console
 
 			System.Console.WriteLine("Zadejte velikost plochy:");
 			System.Console.WriteLine($"   min: {MIN_FIELD_SIZE};   max: {MAX_FIELD_SIZE}");
+		}
+
+		public void Invoke()
+		{
+			var size = GetSize();
+
+			_game.SetState(new FieldCreatingState(_game, new FieldSetup(size)));
 		}
 	}
 }

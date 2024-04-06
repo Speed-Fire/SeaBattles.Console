@@ -1,10 +1,10 @@
-﻿namespace SeaBattles.Console.States.Game
+﻿namespace SeaBattles.Console.States.Engine
 {
-	internal class DefeatState : IState
+	internal class VictoryState : IState
 	{
-		private readonly Engine _engine;
+		private readonly Console.Engine _engine;
 
-		public DefeatState(Engine engine)
+		public VictoryState(Console.Engine engine)
 		{
 			_engine = engine;
 		}
@@ -27,7 +27,7 @@
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("=======================");
-			System.Console.WriteLine("====    PORAZKA    ====");
+			System.Console.WriteLine("====     VYHRA     ====");
 			System.Console.WriteLine("=======================");
 		}
 

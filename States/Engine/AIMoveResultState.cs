@@ -1,17 +1,12 @@
 ﻿using SeaBattles.Console.Misc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SeaBattles.Console.States.Game
+namespace SeaBattles.Console.States.Engine
 {
 	internal class AIMoveResultState : IState
 	{
-		private readonly Engine _engine;
+		private readonly Console.Engine _engine;
 
-		public AIMoveResultState(Engine engine)
+		public AIMoveResultState(Console.Engine engine)
 		{
 			_engine = engine;
 		}

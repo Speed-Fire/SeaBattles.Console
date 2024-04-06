@@ -3,44 +3,38 @@ using SeaBattles.Console.Input;
 using SeaBattles.Console.Misc;
 using SeaBattles.Console.Models;
 
-#nullable disable
-
-namespace SeaBattles.Console.FieldFactories
+namespace SeaBattles.Console.States.Menus
 {
-    internal class UserFieldFactory : IFieldFactory
-    {
+	internal class FieldCreatingState : IState
+	{
 		private const string REGEX_SHIP = @"^[a-zA-Z]\s*\d{1,2}\s*[sv]\s*[lmst]$";
 		private const string REGEX_CLEAR = "^smaz$";
 		private const string REGEX_EXIT = "^konc$";
 		private const string REGEX_CONTINUE = "^.*$";
 
+		private readonly Game _game;
+		private readonly FieldSetup _fieldSetup;
+
 		private readonly InputHandler _inputHandler = new();
 
 		private FieldFiller _filler;
-		private FieldSetup _fieldSetup;
 
-		private volatile bool _canBuild = false;
-
-		public UserFieldFactory()
+		public FieldCreatingState(Game game, FieldSetup fieldSetup)
 		{
 			InitInputHandler();
+			_game = game;
+			_fieldSetup = fieldSetup;
+
+			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
 		}
 
-        public BattleField CreateBattlefield(FieldSetup setup)
-        {
-			_fieldSetup = setup;
-            _filler = FieldFillerFactory.Create(setup.Size);
+		public void Invoke()
+		{
+			Draw(_filler);
 
-			while(!_canBuild)
-			{
-				Draw(_filler);
+			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
-				var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-				_inputHandler.Handle(input);
-			}
-
-			return _filler.Build();
+			_inputHandler.Handle(input);
 		}
 
 		#region Drawing
@@ -86,31 +80,31 @@ namespace SeaBattles.Console.FieldFactories
 		}
 
 		private static void PrintAvailableShips(FieldFiller filler)
-        {
-            System.Console.Write("   ");
+		{
+			System.Console.Write("   ");
 
 
 			foreach (var pair in filler.AvailableShips)
-            {
-                switch (pair.Key)
-                {
-                    case ShipSize.Tiny:
-                        System.Console.Write($"Maly ({ShipCoordinateParser.CHAR_SHIP_TINY}): {pair.Value};  ");
-                        break;
-                    case ShipSize.Small:
-                        System.Console.Write($"Stredni ({ShipCoordinateParser.CHAR_SHIP_SMALL}): {pair.Value};  ");
-                        break;
-                    case ShipSize.Medium:
-                        System.Console.Write($"Velky ({ShipCoordinateParser.CHAR_SHIP_MEDIUM}): {pair.Value};  ");
-                        break;
-                    case ShipSize.Large:
-                        System.Console.Write($"Obrovsky ({ShipCoordinateParser.CHAR_SHIP_LARGE}): {pair.Value};  ");
-                        break;
-                }
-            }
+			{
+				switch (pair.Key)
+				{
+					case ShipSize.Tiny:
+						System.Console.Write($"Maly ({ShipCoordinateParser.CHAR_SHIP_TINY}): {pair.Value};  ");
+						break;
+					case ShipSize.Small:
+						System.Console.Write($"Stredni ({ShipCoordinateParser.CHAR_SHIP_SMALL}): {pair.Value};  ");
+						break;
+					case ShipSize.Medium:
+						System.Console.Write($"Velky ({ShipCoordinateParser.CHAR_SHIP_MEDIUM}): {pair.Value};  ");
+						break;
+					case ShipSize.Large:
+						System.Console.Write($"Obrovsky ({ShipCoordinateParser.CHAR_SHIP_LARGE}): {pair.Value};  ");
+						break;
+				}
+			}
 
-            System.Console.WriteLine();
-        }
+			System.Console.WriteLine();
+		}
 
 		#endregion
 
@@ -132,12 +126,17 @@ namespace SeaBattles.Console.FieldFactories
 
 		private void BuildField()
 		{
-			_canBuild = true;
+			if (_filler.AvailableShips.Any())
+				return;
+
+			var battlefield = _filler.Build();
+
+			_game.SetState(new NewGameState(_game, battlefield, _fieldSetup));
 		}
 
 		private void Exit()
 		{
-
+			_game.SetState(new MainMenuState(_game));
 		}
 
 		#endregion
