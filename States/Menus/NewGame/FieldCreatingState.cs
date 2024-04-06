@@ -17,6 +17,8 @@ namespace SeaBattles.Console.States.Menus
 
 		private readonly InputHandler _inputHandler = new();
 
+		private readonly InputToken _continueToken;
+
 		private FieldFiller _filler;
 
 		public FieldCreatingState(Game game, FieldSetup fieldSetup)
@@ -26,10 +28,15 @@ namespace SeaBattles.Console.States.Menus
 			_fieldSetup = fieldSetup;
 
 			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
+
+			_continueToken = new(REGEX_CONTINUE, (_) => { BuildField(); });
 		}
 
 		public void Invoke()
 		{
+			if (!_filler.AvailableShips.Any())
+				_inputHandler.Add(_continueToken);
+
 			Draw();
 
 			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
@@ -131,6 +138,8 @@ namespace SeaBattles.Console.States.Menus
 		private void ClearField()
 		{
 			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
+
+			_inputHandler.Remove(_continueToken);
 		}
 
 		private void BuildField()
@@ -157,7 +166,6 @@ namespace SeaBattles.Console.States.Menus
 			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 			_inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });
 			_inputHandler.Add(REGEX_SHIP, PutShip);
-			_inputHandler.Add(REGEX_CONTINUE, (_) => { BuildField(); });
 		}
 
 		#endregion
