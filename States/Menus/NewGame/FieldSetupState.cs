@@ -28,12 +28,15 @@ namespace SeaBattles.Console.States.Menus
 
 			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
-			_inputHandler.Handle(input);
+			if (!_inputHandler.Handle(input))
+			{
+				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
+			}
 		}
 
 		#region Drawing
 
-		private static void Draw()
+		private void Draw()
 		{
 			System.Console.Clear();
 
@@ -42,6 +45,9 @@ namespace SeaBattles.Console.States.Menus
 
 			System.Console.WriteLine();
 			System.Console.WriteLine("Pokud se chcete vratit do hladniho menu, zadejte \'konc\'.");
+			System.Console.WriteLine();
+
+			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
 			System.Console.WriteLine();
 		}
 

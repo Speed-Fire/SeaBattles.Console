@@ -28,7 +28,10 @@ namespace SeaBattles.Console.States.Engine
 
 			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
-			_inputHandler.Handle(input);
+			if (!_inputHandler.Handle(input))
+			{
+				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
+			}
 		}
 
 		#region Drawing

@@ -30,16 +30,19 @@ namespace SeaBattles.Console.States.Menus
 
 		public void Invoke()
 		{
-			Draw(_filler);
+			Draw();
 
 			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
 
-			_inputHandler.Handle(input);
+			if (!_inputHandler.Handle(input))
+			{
+				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
+			}
 		}
 
 		#region Drawing
 
-		private static void Draw(FieldFiller filler)
+		private void Draw()
 		{
 			System.Console.Clear();
 
@@ -56,14 +59,14 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Dostupne lode:");
-			PrintAvailableShips(filler);
+			PrintAvailableShips();
 			System.Console.WriteLine();
 
 			System.Console.WriteLine($"Priklad: a1 {ShipCoordinateParser.CHAR_VERTICAL_DIRECTION}" +
 				$" {ShipCoordinateParser.CHAR_SHIP_LARGE}");
 
 			System.Console.WriteLine();
-			filler.Draw();
+			_filler.Draw();
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Pokud chcete vycistit plochu, zadejte \'smaz\'.");
@@ -72,19 +75,21 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
 			System.Console.WriteLine();
 
-			if (filler.AvailableShips.Any())
+			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
+			System.Console.WriteLine();
+
+			if (_filler.AvailableShips.Any())
 				return;
 
 			System.Console.WriteLine();
 			System.Console.WriteLine("Pokracujte stiskem cokoliv jineho.");
 		}
 
-		private static void PrintAvailableShips(FieldFiller filler)
+		private void PrintAvailableShips()
 		{
 			System.Console.Write("   ");
 
-
-			foreach (var pair in filler.AvailableShips)
+			foreach (var pair in _filler.AvailableShips)
 			{
 				switch (pair.Key)
 				{
@@ -116,6 +121,10 @@ namespace SeaBattles.Console.States.Menus
 					out var direction, out var shipSize))
 			{
 				_filler.PutShip(x, y, shipSize, direction);
+			}
+			else
+			{
+				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
 			}
 		}
 
