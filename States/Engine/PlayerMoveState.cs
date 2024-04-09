@@ -59,7 +59,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.CompField, false, _engine.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(_engine.CompField, true, _engine.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();
