@@ -3,24 +3,27 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class PlayerMoveState : EngineState
+	internal class PlayerMoveState : IState
 	{
 		private const string REGEX_SAVE_AND_EXIT = "^uloz$";
 		private const string REGEX_USE_HINT = "^nap$";
 		private const string REGEX_MOVE = @"^[a-zA-Z]\s*\d{1,2}$";
 		private const string REGEX_EXIT = @"^konc$";
 
+		private readonly Console.Engine _engine;
+
 		private readonly InputHandler _inputHandler;
 
-		public PlayerMoveState(Console.Engine engine, Func<string, IState> stateGetter)
-			: base(engine, stateGetter)
+		public PlayerMoveState(Console.Engine engine)
 		{
+			_engine = engine;
+
 			_inputHandler = new InputHandler();
 
 			InitInputHandler();
 		}
 
-		public override void Invoke()
+		public void Invoke()
 		{
 			Draw();
 
@@ -48,18 +51,18 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '=') + exitTipStr);
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"Napovedy: {_engine.RemainingHintCount}. Pis \'nap\'");
+			System.Console.WriteLine($"Napovedy: {_engine.LevelData.RemainingHintCount}. Pis \'nap\'");
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.UserField.ShipCount,-2}               {_engine.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.CompField, true, _engine.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(_engine.LevelData.CompField, true, _engine.LevelData.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();
@@ -74,7 +77,7 @@ namespace SeaBattles.Console.States.Engine
 
 		private void TakeMove(string input)
 		{
-			if (!ShipCoordinateParser.TryParse(input, _engine.CompField.Size, out var x, out var y))
+			if (!ShipCoordinateParser.TryParse(input, _engine.LevelData.CompField.Size, out var x, out var y))
 			{
 				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
@@ -83,8 +86,8 @@ namespace SeaBattles.Console.States.Engine
 				return;
 			}
 
-			if (_engine.CompField[x, y] == CellState.Attacked ||
-				_engine.CompField[x, y] == CellState.Destroyed)
+			if (_engine.LevelData.CompField[x, y] == CellState.Attacked ||
+				_engine.LevelData.CompField[x, y] == CellState.Destroyed)
 			{
 				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
 
@@ -93,11 +96,11 @@ namespace SeaBattles.Console.States.Engine
 				return;
 			}
 
-			var res = _engine.CompField.Attack((uint)x, (uint)y);
+			var res = _engine.LevelData.CompField.Attack((uint)x, (uint)y);
 
-			if (_engine.CompField.IsEmpty)
+			if (_engine.LevelData.CompField.IsEmpty)
 			{
-				SetState(nameof(VictoryState));
+				_engine.SetState(new VictoryState(_engine));
 
 				return;
 			}
@@ -114,7 +117,7 @@ namespace SeaBattles.Console.States.Engine
 				case AttackResult.Missed:
 					_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
-					SetState(nameof(PlayerMoveResultState));
+					_engine.SetState(new PlayerMoveResultState(_engine));
 
 					return;
 				case AttackResult.Hitten:
@@ -141,13 +144,13 @@ namespace SeaBattles.Console.States.Engine
 
 		private void UseHint()
 		{
-			if (_engine.RemainingHintCount <= 0)
+			if (_engine.LevelData.RemainingHintCount <= 0)
 				return;
 
-			var hint = _engine.CompField.GetRandomShipCell();
+			var hint = _engine.LevelData.CompField.GetRandomShipCell();
 
 			if (hint is not null)
-				_engine.AddHint(hint.Value);
+				_engine.LevelData.AddHint(hint.Value);
 
 			//_engine.SetState(new PlayerMoveState(_engine));
 		}

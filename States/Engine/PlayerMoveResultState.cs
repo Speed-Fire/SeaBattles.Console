@@ -2,20 +2,22 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class PlayerMoveResultState : EngineState
+	internal class PlayerMoveResultState : IState
 	{
-		public PlayerMoveResultState(Console.Engine engine, Func<string, IState> stateGetter)
-			: base(engine, stateGetter)
+		private readonly Console.Engine _engine;
+
+		public PlayerMoveResultState(Console.Engine engine)
 		{
+			_engine = engine;
 		}
 
-		public override void Invoke()
+		public void Invoke()
 		{
 			Draw();
 
 			System.Console.ReadLine();
 
-			SetState(nameof(AIMoveState));
+			_engine.SetState(new AIMoveState(_engine));
 		}
 
 		#region Drawing
@@ -31,18 +33,18 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '='));
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"Napovedy: {_engine.RemainingHintCount}. Pis \'nap\'");
+			System.Console.WriteLine($"Napovedy: {_engine.LevelData.RemainingHintCount}. Pis \'nap\'");
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.UserField.ShipCount,-2}               {_engine.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.CompField, true, _engine.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(_engine.LevelData.CompField, true, _engine.LevelData.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();

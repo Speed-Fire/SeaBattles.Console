@@ -3,21 +3,19 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class AIMoveState : EngineState
+	internal class AIMoveState : IState
 	{
 		private const int AI_MIN_THINKING_DURATION = 1000;
 		private const int AI_MAX_THINKING_DURATION = 5000;
 
-		private readonly AIPlayer _ai;
+		private readonly Console.Engine _engine;
 
-		public AIMoveState(Console.Engine engine, Func<string, IState> stateGetter,
-			AIPlayer ai)
-			: base(engine, stateGetter)
+		public AIMoveState(Console.Engine engine)
 		{
-			_ai = ai;
+			_engine = engine;
 		}
 
-		public override void Invoke()
+		public void Invoke()
 		{
 			Draw();
 
@@ -44,13 +42,13 @@ namespace SeaBattles.Console.States.Engine
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.UserField.ShipCount,-2}               {_engine.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Vase plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.UserField, false);
+			BattlefieldDrawer.Draw(_engine.LevelData.UserField, false);
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();
@@ -76,27 +74,11 @@ namespace SeaBattles.Console.States.Engine
 		{
 			while (true)
 			{
-				//int x, y;
+				var attackRes = _engine.LevelData.AI.Attack();
 
-				//while (true)
-				//{
-				//	var res = ComputerFieldCoordsGenerator.Generate(_engine.UserField.Size);
-				//	(x, y) = (res.X, res.Y);
-
-				//	if (_engine.UserField[x, y] == CellState.Attacked ||
-				//		_engine.UserField[x, y] == CellState.Destroyed)
-				//		continue;
-
-				//	break;
-				//}
-
-				//var attackRes = _engine.UserField.Attack((uint)x, (uint)y);
-
-				var attackRes = _ai.Attack();
-
-				if (_engine.UserField.IsEmpty)
+				if (_engine.LevelData.UserField.IsEmpty)
 				{
-					SetState(nameof(DefeatState));
+					_engine.SetState(new DefeatState(_engine));
 
 					return;
 				}
@@ -113,7 +95,7 @@ namespace SeaBattles.Console.States.Engine
 					case AttackResult.Missed:
 						_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
-						SetState(nameof(AIMoveResultState));
+						_engine.SetState(new AIMoveResultState(_engine));
 
 						return;
 					case AttackResult.Hitten:

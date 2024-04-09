@@ -1,21 +1,31 @@
-﻿namespace SeaBattles.Console.AI
+﻿using System.Runtime.Serialization;
+
+namespace SeaBattles.Console.AI
 {
+	[DataContract]
 	internal class AIPlayerNormal : AIPlayer
 	{
-		protected class LastLucklyAttack
+		public class LastLucklyAttack
 		{
+			[DataMember]
 			public (int, int) lastHittenPoint;
+
+			[DataMember]
 			public int directionId;
+
+			[DataMember]
 			public int length;
 		}
 
-		protected readonly (int, int)[] _directions;
+		protected readonly (int, int)[] _directions
+			= new (int, int)[] { (-1, 0), (0, 1), (1, 0), (0, -1) };
 
+		[DataMember]
 		protected LastLucklyAttack? _lastAttack = null;
 
 		public AIPlayerNormal(BattleField field) : base(field)
 		{
-			_directions = new (int, int)[] { (-1, 0), (0, 1), (1, 0), (0, -1) };
+			//_directions = new (int, int)[] { (-1, 0), (0, 1), (1, 0), (0, -1) };
 		}
 
 		public override AttackResult Attack()
@@ -165,6 +175,13 @@
 				3 => 1,
 				_ => 0,
 			};
+		}
+
+		public override string ToString()
+		{
+			return _lastAttack is null ? string.Empty :
+				$"{_lastAttack.lastHittenPoint.Item1} {_lastAttack.lastHittenPoint.Item2} " +
+				$"{_lastAttack.directionId} {_lastAttack.length}";
 		}
 	}
 }

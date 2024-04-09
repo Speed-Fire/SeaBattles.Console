@@ -2,20 +2,22 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class DefeatState : EngineState
+	internal class DefeatState : IState
 	{
-		public DefeatState(Console.Engine engine, Func<string, IState> stateGetter) 
-			: base(engine, stateGetter)
+		private readonly Console.Engine _engine;
+
+		public DefeatState(Console.Engine engine)
 		{
+			_engine = engine;
 		}
 
-		public override void Invoke()
+		public void Invoke()
 		{
 			Draw();
 
 			System.Console.ReadLine();
 
-			SetNullState();
+			_engine.SetState(null);
 		}
 
 		#region Drawing
@@ -36,13 +38,13 @@ namespace SeaBattles.Console.States.Engine
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.UserField.ShipCount,-2}               {_engine.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Vase plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.UserField, false);
+			BattlefieldDrawer.Draw(_engine.LevelData.UserField, false);
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();

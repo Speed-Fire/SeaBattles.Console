@@ -1,5 +1,8 @@
-﻿namespace SeaBattles.Console.AI
+﻿using System.Runtime.Serialization;
+
+namespace SeaBattles.Console.AI
 {
+	[DataContract]
 	internal class AIPlayerEasy : AIPlayer
 	{
 		public AIPlayerEasy(BattleField field) : base(field)

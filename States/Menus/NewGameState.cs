@@ -25,7 +25,9 @@ namespace SeaBattles.Console.States.Menus
 		{
 			var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
 
-			var engine = new Console.Engine(_userField, compField, GetAI(_userField));
+			var levelData = new LevelData(GetAI(_userField), _userField, compField);
+
+			var engine = new Console.Engine(levelData);
 
 			_game.SetState(new PlayingState(_game, engine));
 		}

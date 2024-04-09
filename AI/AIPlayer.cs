@@ -1,7 +1,9 @@
 ﻿using SeaBattles.Console.Misc;
+using System.Runtime.Serialization;
 
 namespace SeaBattles.Console.AI
 {
+	[DataContract]
 	internal abstract class AIPlayer
 	{
 		protected readonly BattleField _field;
@@ -28,6 +30,11 @@ namespace SeaBattles.Console.AI
 
 				return (x, y);
 			}
+		}
+
+		public override string ToString()
+		{
+			return string.Empty;
 		}
 	}
 }

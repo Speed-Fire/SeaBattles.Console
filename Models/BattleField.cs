@@ -1,17 +1,26 @@
-﻿namespace SeaBattles.Console
+﻿using SeaBattles.Console.FieldFillers;
+using System.Runtime.Serialization;
+using System.Text;
+
+namespace SeaBattles.Console
 {
+	[DataContract]
     public class BattleField
 	{
+		[DataMember]
 		public CellState[,] Field { get; }
+
+		[DataMember]
 		public int Size { get; }
+
 		public int ShipCount => _ships.Count;
 		public bool IsEmpty => //ShipCellCount == 0; 
 			ShipCount == 0;
 
 		private int ShipCellCount { get; set; } // count of cells with ships: a 4-long ship is 4 cells
 
-		private readonly Dictionary<int, int> _ships;
-		private readonly int[,] _shipCountField;
+		private Dictionary<int, int> _ships;
+		private int[,] _shipCountField;
 
 		internal BattleField(int size, CellState[,] field,
 			int[,] shipCountField, Dictionary<int, int> ships)
@@ -113,6 +122,36 @@
 			}
 
 			return res;
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+
+			for(int i = 0; i < Size; i++)
+			{
+				for(int j = 0; j < Size; j++)
+				{
+					var ch = (char)('0' + Field[i, j]);
+
+					sb.Append(ch);
+				}
+
+				sb.Append(Environment.NewLine);
+			}
+
+			return sb.ToString();
+		}
+
+		[OnDeserialized]
+		private void InitShipCountField()
+		{
+			var (field, dict) = FieldShipCalculator.CreateShipCountField(Size, Field);
+
+			_shipCountField = field;
+			_ships = dict;
+
+			ShipCellCount = CalculateShipCellCount();
 		}
 	}
 }

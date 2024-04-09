@@ -2,20 +2,22 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class AIMoveResultState : EngineState
+	internal class AIMoveResultState : IState
 	{
-		public AIMoveResultState(Console.Engine engine, Func<string, IState> stateGetter)
-			: base(engine, stateGetter)
+		private readonly Console.Engine _engine;
+
+		public AIMoveResultState(Console.Engine engine)
 		{
+			_engine = engine;
 		}
 
-		public override void Invoke()
+		public void Invoke()
 		{
 			Draw();
 
 			System.Console.ReadLine();
 
-			SetState(nameof(PlayerMoveState));
+			_engine.SetState(new PlayerMoveState(_engine));
 		}
 
 		#region Drawing
@@ -36,13 +38,13 @@ namespace SeaBattles.Console.States.Engine
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.UserField.ShipCount,-2}               {_engine.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Vase plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.UserField, false);
+			BattlefieldDrawer.Draw(_engine.LevelData.UserField, false);
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();

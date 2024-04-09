@@ -23,7 +23,7 @@ namespace SeaBattles.Console.FieldFillers
 
         public BattleField Build()
         {
-            var (shipCountField, ships) = CreateShipCountField();
+            var (shipCountField, ships) = FieldShipCalculator.CreateShipCountField(Size, _field);
 
             return new BattleField(_size, _field, shipCountField, ships);
         }
@@ -101,54 +101,5 @@ namespace SeaBattles.Console.FieldFillers
         {
             BattlefieldDrawer.Draw(_field, _size);
         }
-
-		#region Building ship count field
-
-		private (int[,], Dictionary<int,int>) CreateShipCountField()
-		{
-            var shipCountField = new int[Size, Size];
-            var ships = new Dictionary<int, int>();
-
-			var number = 1;
-
-			for (int i = 0; i < Size; i++)
-			{
-				for (int j = 0; j < Size; j++)
-				{
-					if (_field[i, j] == CellState.Ship && shipCountField[i, j] == 0)
-					{
-						InitShip(ships, shipCountField, i, j, number);
-
-						number++;
-					}
-				}
-			}
-
-            return (shipCountField, ships);
-		}
-
-		private void InitShip(in Dictionary<int, int> ships, in int[,] shipCountField,
-            int x, int y, int number)
-		{
-			if (x < 0 || y < 0 || x >= Size || y >= Size)
-				return;
-
-			if (_field[x, y] != CellState.Ship || shipCountField[x, y] != 0)
-				return;
-
-			shipCountField[x, y] = number;
-
-            if(!ships.ContainsKey(number))
-                ships[number] = 0;
-
-			ships[number]++;
-
-			InitShip(ships, shipCountField, x + 1, y, number);
-			InitShip(ships, shipCountField, x - 1, y, number);
-			InitShip(ships, shipCountField, x, y + 1, number);
-			InitShip(ships, shipCountField, x, y - 1, number);
-		}
-
-		#endregion
 	}
 }
