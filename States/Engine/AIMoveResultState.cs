@@ -2,22 +2,20 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class AIMoveResultState : IState
+	internal class AIMoveResultState : EngineState
 	{
-		private readonly Console.Engine _engine;
-
-		public AIMoveResultState(Console.Engine engine)
+		public AIMoveResultState(Console.Engine engine, Func<string, IState> stateGetter)
+			: base(engine, stateGetter)
 		{
-			_engine = engine;
 		}
 
-		public void Invoke()
+		public override void Invoke()
 		{
 			Draw();
 
 			System.Console.ReadLine();
 
-			_engine.SetState(new PlayerMoveState(_engine));
+			SetState(nameof(PlayerMoveState));
 		}
 
 		#region Drawing

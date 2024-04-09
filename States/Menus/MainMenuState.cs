@@ -50,7 +50,7 @@ namespace SeaBattles.Console.States.Menus
 
 		private void InitInputHandler()
 		{
-			_inputHandler.Add(@"^1$", (_) => { _game.SetState(new FieldSetupState(_game)); });
+			_inputHandler.Add(@"^1$", (_) => { _game.SetState(new FieldSetupSizeState(_game)); });
 			_inputHandler.Add(@"^2$", (_) => { _game.SetState(new LoadGameState(_game)); });
 			_inputHandler.Add(@"^3$", (_) => { _game.SetState(null); });
 		}

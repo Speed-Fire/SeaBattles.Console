@@ -1,4 +1,5 @@
-﻿using SeaBattles.Console.FieldFactories;
+﻿using SeaBattles.Console.AI;
+using SeaBattles.Console.FieldFactories;
 using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
@@ -24,9 +25,19 @@ namespace SeaBattles.Console.States.Menus
 		{
 			var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
 
-			var engine = new Console.Engine(_userField, compField);
+			var engine = new Console.Engine(_userField, compField, GetAI(_userField));
 
 			_game.SetState(new PlayingState(_game, engine));
+		}
+
+		private AIPlayer GetAI(BattleField userField)
+		{
+			return _fieldSetup.Difficult switch
+			{
+				Difficult.Normal => new AIPlayerNormal(userField),
+				Difficult.Hard => new AIPlayerHard(userField),
+				_ => new AIPlayerEasy(userField),
+			};
 		}
 	}
 }

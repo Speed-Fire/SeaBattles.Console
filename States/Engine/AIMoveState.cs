@@ -1,20 +1,23 @@
-﻿using SeaBattles.Console.Misc;
+﻿using SeaBattles.Console.AI;
+using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class AIMoveState : IState
+	internal class AIMoveState : EngineState
 	{
 		private const int AI_MIN_THINKING_DURATION = 1000;
 		private const int AI_MAX_THINKING_DURATION = 5000;
 
-		private readonly Console.Engine _engine;
+		private readonly AIPlayer _ai;
 
-		public AIMoveState(Console.Engine engine)
+		public AIMoveState(Console.Engine engine, Func<string, IState> stateGetter,
+			AIPlayer ai)
+			: base(engine, stateGetter)
 		{
-			_engine = engine;
+			_ai = ai;
 		}
 
-		public void Invoke()
+		public override void Invoke()
 		{
 			Draw();
 
@@ -73,25 +76,27 @@ namespace SeaBattles.Console.States.Engine
 		{
 			while (true)
 			{
-				int x, y;
+				//int x, y;
 
-				while (true)
-				{
-					var res = ComputerFieldCoordsGenerator.Generate(_engine.UserField.Size);
-					(x, y) = (res.X, res.Y);
+				//while (true)
+				//{
+				//	var res = ComputerFieldCoordsGenerator.Generate(_engine.UserField.Size);
+				//	(x, y) = (res.X, res.Y);
 
-					if (_engine.UserField[x, y] == CellState.Attacked ||
-						_engine.UserField[x, y] == CellState.Destroyed)
-						continue;
+				//	if (_engine.UserField[x, y] == CellState.Attacked ||
+				//		_engine.UserField[x, y] == CellState.Destroyed)
+				//		continue;
 
-					break;
-				}
+				//	break;
+				//}
 
-				var attackRes = _engine.UserField.Attack((uint)x, (uint)y);
+				//var attackRes = _engine.UserField.Attack((uint)x, (uint)y);
+
+				var attackRes = _ai.Attack();
 
 				if (_engine.UserField.IsEmpty)
 				{
-					_engine.SetState(new DefeatState(_engine));
+					SetState(nameof(DefeatState));
 
 					return;
 				}
@@ -108,7 +113,7 @@ namespace SeaBattles.Console.States.Engine
 					case AttackResult.Missed:
 						_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
-						_engine.SetState(new AIMoveResultState(_engine));
+						SetState(nameof(AIMoveResultState));
 
 						return;
 					case AttackResult.Hitten:

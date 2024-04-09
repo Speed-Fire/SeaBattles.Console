@@ -1,21 +1,20 @@
-﻿namespace SeaBattles.Console.States.Engine
+﻿
+namespace SeaBattles.Console.States.Engine
 {
-	internal class VictoryState : IState
+	internal class VictoryState : EngineState
 	{
-		private readonly Console.Engine _engine;
-
-		public VictoryState(Console.Engine engine)
+		public VictoryState(Console.Engine engine, Func<string, IState> stateGetter) 
+			: base(engine, stateGetter)
 		{
-			_engine = engine;
 		}
 
-		public void Invoke()
+		public override void Invoke()
 		{
 			Draw();
 
 			System.Console.ReadLine();
 
-			_engine.SetState(null);
+			SetNullState();
 		}
 
 		#region Drawing

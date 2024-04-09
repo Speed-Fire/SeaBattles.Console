@@ -3,7 +3,7 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class FieldSetupState : IState
+	internal class FieldSetupSizeState : IState
 	{
 		private const string REGEX_SIZE = @"^\d+$";
 		private const string REGEX_EXIT = @"^konc$";
@@ -14,7 +14,7 @@ namespace SeaBattles.Console.States.Menus
 		private const int MIN_FIELD_SIZE = 7;
 		private const int MAX_FIELD_SIZE = 15;
 
-		public FieldSetupState(Game game)
+		public FieldSetupSizeState(Game game)
 		{
 			_game = game;
 			_inputHandler = new();
@@ -61,7 +61,7 @@ namespace SeaBattles.Console.States.Menus
 					&& size >= MIN_FIELD_SIZE
 					&& size <= MAX_FIELD_SIZE)
 			{
-				_game.SetState(new FieldCreatingState(_game, new FieldSetup(size)));
+				_game.SetState(new FieldSetupDifficultyState(_game, new FieldSetup() { Size = size }));
 			}
 		}
 

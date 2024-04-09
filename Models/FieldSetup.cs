@@ -2,11 +2,7 @@
 {
 	internal class FieldSetup
 	{
-		public int Size { get; }
-
-		public FieldSetup(int size)
-		{
-			Size = size;
-		}
+		public int Size { get; set; }
+		public Difficult Difficult { get; set; }
 	}
 }

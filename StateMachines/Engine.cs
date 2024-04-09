@@ -1,4 +1,6 @@
-﻿using SeaBattles.Console.States.Engine;
+﻿using SeaBattles.Console.AI;
+using SeaBattles.Console.States;
+using SeaBattles.Console.States.Engine;
 
 namespace SeaBattles.Console
 {
@@ -15,12 +17,18 @@ namespace SeaBattles.Console
 
 		public int RemainingHintCount { get; private set; } = 3;
 
-		public Engine(BattleField userField, BattleField compField)
+		private readonly Dictionary<string, IState> _stateMap;
+
+		public Engine(BattleField userField, BattleField compField, AIPlayer ai)
 		{
 			UserField = userField;
 			CompField = compField;
 
-			SetState(new PlayerMoveState(this));
+			_stateMap = new();
+
+			InitStateMap(ai);
+
+			SetState(_stateMap[nameof(PlayerMoveState)]);
 		}
 
 		public void AddHint((int, int) hint)
@@ -31,6 +39,21 @@ namespace SeaBattles.Console
 			Hints.Add(hint);
 
 			RemainingHintCount--;
+		}
+
+		private void InitStateMap(AIPlayer ai)
+		{
+			IState StateGetter(string name)
+			{
+				return _stateMap[name];
+			}
+
+			_stateMap.Add(nameof(PlayerMoveState), new PlayerMoveState(this, StateGetter));
+			_stateMap.Add(nameof(PlayerMoveResultState), new PlayerMoveResultState(this, StateGetter));
+			_stateMap.Add(nameof(AIMoveState), new AIMoveState(this, StateGetter, ai));
+			_stateMap.Add(nameof(AIMoveResultState), new AIMoveResultState(this, StateGetter));
+			_stateMap.Add(nameof(VictoryState), new VictoryState(this, StateGetter));
+			_stateMap.Add(nameof(DefeatState), new DefeatState(this, StateGetter));
 		}
 	}
 }

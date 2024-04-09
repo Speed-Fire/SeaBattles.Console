@@ -3,26 +3,24 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class PlayerMoveState : IState
+	internal class PlayerMoveState : EngineState
 	{
 		private const string REGEX_SAVE_AND_EXIT = "^uloz$";
 		private const string REGEX_USE_HINT = "^nap$";
 		private const string REGEX_MOVE = @"^[a-zA-Z]\s*\d{1,2}$";
 		private const string REGEX_EXIT = @"^konc$";
 
-		private readonly Console.Engine _engine;
 		private readonly InputHandler _inputHandler;
 
-		public PlayerMoveState(Console.Engine engine)
+		public PlayerMoveState(Console.Engine engine, Func<string, IState> stateGetter)
+			: base(engine, stateGetter)
 		{
-			_engine = engine;
-
 			_inputHandler = new InputHandler();
 
 			InitInputHandler();
 		}
 
-		public void Invoke()
+		public override void Invoke()
 		{
 			Draw();
 
@@ -61,7 +59,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.CompField, true, _engine.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(_engine.CompField, false, _engine.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();
@@ -99,7 +97,7 @@ namespace SeaBattles.Console.States.Engine
 
 			if (_engine.CompField.IsEmpty)
 			{
-				_engine.SetState(new VictoryState(_engine));
+				SetState(nameof(VictoryState));
 
 				return;
 			}
@@ -116,7 +114,7 @@ namespace SeaBattles.Console.States.Engine
 				case AttackResult.Missed:
 					_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
 
-					_engine.SetState(new PlayerMoveResultState(_engine));
+					SetState(nameof(PlayerMoveResultState));
 
 					return;
 				case AttackResult.Hitten:
