@@ -9,10 +9,10 @@ using System.Xml;
 
 namespace SeaBattles.Console.Level
 {
-	internal class LevelSerializer
+	internal static class LevelSerializer
 	{
 		private static readonly string _directory =
-			Path.Combine(Directory.GetCurrentDirectory(), "Saves");
+			Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Saves");
 
 		public static bool Serialize(LevelData levelData)
 		{
@@ -26,7 +26,9 @@ namespace SeaBattles.Console.Level
 
 				var serializer = new DataContractSerializer(typeof(LevelData));
 
-				using var filestream = File.OpenWrite(filename);
+				CreateSavingDirectory();
+
+                using var filestream = File.OpenWrite(filename);
 
 				using var xmlWriter = XmlDictionaryWriter.CreateTextWriter(filestream);
 
@@ -58,6 +60,12 @@ namespace SeaBattles.Console.Level
 			{
 				return null;
 			}
+		}
+
+		private static void CreateSavingDirectory()
+		{
+			if(!Directory.Exists(_directory))
+				Directory.CreateDirectory(_directory);
 		}
 	}
 }

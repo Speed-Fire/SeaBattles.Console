@@ -1,5 +1,4 @@
-﻿using SeaBattles.Console.States;
-using SeaBattles.Console.States.Menus;
+﻿using SeaBattles.Console.States.Menus;
 
 namespace SeaBattles.Console
 {

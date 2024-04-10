@@ -137,9 +137,7 @@ namespace SeaBattles.Console.States.Engine
 
 		private void SaveAndExit()
 		{
-
-
-			_engine.SetState(null);
+			_engine.SetState(new SavingState(_engine));
 		}
 
 		private void UseHint()
