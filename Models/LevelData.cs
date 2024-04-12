@@ -38,7 +38,10 @@ namespace SeaBattles.Console.Models
 
 		public bool AddHint((int, int) hint)
 		{
-			if(RemainingHintCount > 0)
+			if (RemainingHintCount <= 0)
+				return true;
+
+			if(!_hints.Contains(hint))
 			{
 				_hints.Add(hint);
 				RemainingHintCount--;

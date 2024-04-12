@@ -145,11 +145,13 @@ namespace SeaBattles.Console.States.Engine
 			if (_engine.LevelData.RemainingHintCount <= 0)
 				return;
 
-			var hint = _engine.LevelData.CompField.GetRandomShipCell();
+			while (true)
+			{
+				var hint = _engine.LevelData.CompField.GetRandomShipCell();
 
-			if (hint is not null)
-				_engine.LevelData.AddHint(hint.Value);
-
+				if (hint is null || _engine.LevelData.AddHint(hint.Value))
+					break;
+			}
 			//_engine.SetState(new PlayerMoveState(_engine));
 		}
 

@@ -68,7 +68,7 @@ namespace SeaBattles.Console.States.Menus
 					_ => throw new Exception()
 				};
 
-				System.Console.WriteLine($"    {i++}    |  {save.Creaated:g}  |    {save.Header.Size,-2}    |  {aiMind}  ");
+				System.Console.WriteLine($"    {i++}    |  {save.Creaated:dd.MM.yyyy HH:mm}  |    {save.Header.Size,-2}    |  {aiMind}  ");
 			}
 
 			System.Console.WriteLine();
