@@ -5,26 +5,24 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class FieldCreatingState : IState
+	internal class FieldCreatingState : UserInputState<Game>
 	{
 		private const string REGEX_SHIP = @"^[a-zA-Z]\s*\d{1,2}\s*[sv]\s*[lmst]$";
 		private const string REGEX_CLEAR = "^smaz$";
 		private const string REGEX_EXIT = "^konc$";
 		private const string REGEX_CONTINUE = "^.*$";
 
-		private readonly Game _game;
 		private readonly FieldSetup _fieldSetup;
 
-		private readonly InputHandler _inputHandler = new();
-
 		private readonly InputToken _continueToken;
+		private Action<InputToken>? AddToken;
+		private Action<InputToken>? RemoveToken;
 
 		private FieldFiller _filler;
 
 		public FieldCreatingState(Game game, FieldSetup fieldSetup)
+			: base(game)
 		{
-			InitInputHandler();
-			_game = game;
 			_fieldSetup = fieldSetup;
 
 			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
@@ -32,25 +30,13 @@ namespace SeaBattles.Console.States.Menus
 			_continueToken = new(REGEX_CONTINUE, (_) => { BuildField(); });
 		}
 
-		public void Invoke()
-		{
-			if (!_filler.AvailableShips.Any())
-				_inputHandler.Add(_continueToken);
-
-			Draw();
-
-			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-			if (!_inputHandler.Handle(input))
-			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
-			}
-		}
-
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
+			if (!_filler.AvailableShips.Any())
+				AddToken?.Invoke(_continueToken);
+
 			System.Console.Clear();
 
 			System.Console.WriteLine($"Postupne zadavejte pozice leveho" +
@@ -80,10 +66,6 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
-			System.Console.WriteLine();
-
-			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
-			System.Console.WriteLine();
 
 			if (_filler.AvailableShips.Any())
 				return;
@@ -131,7 +113,7 @@ namespace SeaBattles.Console.States.Menus
 			}
 			else
 			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
+				StateMsg = MSG_BAD_INPUT;
 			}
 		}
 
@@ -139,7 +121,7 @@ namespace SeaBattles.Console.States.Menus
 		{
 			_filler = FieldFillerFactory.Create(_fieldSetup.Size);
 
-			_inputHandler.Remove(_continueToken);
+			RemoveToken?.Invoke(_continueToken);
 		}
 
 		private void BuildField()
@@ -149,23 +131,26 @@ namespace SeaBattles.Console.States.Menus
 
 			var battlefield = _filler.Build();
 
-			_game.SetState(new NewGameState(_game, battlefield, _fieldSetup));
+			SetState(new NewGameState(StateMachine, battlefield, _fieldSetup));
 		}
 
 		private void Exit()
 		{
-			_game.SetState(new MainMenuState(_game));
+			SetState(new MainMenuState(StateMachine));
 		}
 
 		#endregion
 
 		#region Initialization
 
-		private void InitInputHandler()
+		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
-			_inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });
-			_inputHandler.Add(REGEX_SHIP, PutShip);
+			inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
+			inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });
+			inputHandler.Add(REGEX_SHIP, PutShip);
+
+			AddToken = (token) => { inputHandler.Add(token); };
+			RemoveToken = (token) => { inputHandler.Remove(token); };
 		}
 
 		#endregion

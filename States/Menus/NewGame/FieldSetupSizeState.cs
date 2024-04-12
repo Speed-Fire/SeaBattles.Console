@@ -3,40 +3,22 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class FieldSetupSizeState : IState
+	internal class FieldSetupSizeState : UserInputState<Game>
 	{
 		private const string REGEX_SIZE = @"^\d+$";
 		private const string REGEX_EXIT = @"^konc$";
 
-		private readonly Game _game;
-		private readonly InputHandler _inputHandler;
-
 		private const int MIN_FIELD_SIZE = 7;
 		private const int MAX_FIELD_SIZE = 15;
 
-		public FieldSetupSizeState(Game game)
+		public FieldSetupSizeState(Game game) : base(game)
 		{
-			_game = game;
-			_inputHandler = new();
 
-			InitInputHandler();
-		}
-
-		public void Invoke()
-		{
-			Draw();
-
-			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-			if (!_inputHandler.Handle(input))
-			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
-			}
 		}
 
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
 			System.Console.Clear();
 
@@ -44,11 +26,7 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.WriteLine($"   min: {MIN_FIELD_SIZE};   max: {MAX_FIELD_SIZE}");
 
 			System.Console.WriteLine();
-			System.Console.WriteLine("Pokud se chcete vratit do hladniho menu, zadejte \'konc\'.");
-			System.Console.WriteLine();
-
-			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
-			System.Console.WriteLine();
+			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
 		}
 
 		#endregion
@@ -61,23 +39,23 @@ namespace SeaBattles.Console.States.Menus
 					&& size >= MIN_FIELD_SIZE
 					&& size <= MAX_FIELD_SIZE)
 			{
-				_game.SetState(new FieldSetupDifficultyState(_game, new FieldSetup() { Size = size }));
+				SetState(new FieldSetupDifficultyState(StateMachine, new FieldSetup() { Size = size }));
 			}
 		}
 
 		private void Exit()
 		{
-			_game.SetState(new MainMenuState(_game));
+			SetState(new MainMenuState(StateMachine));
 		}
 
 		#endregion
 
 		#region Initialization
 
-		private void InitInputHandler()
+		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			_inputHandler.Add(REGEX_SIZE, GetSize);
-			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
+			inputHandler.Add(REGEX_SIZE, GetSize);
+			inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 		}
 
 		#endregion

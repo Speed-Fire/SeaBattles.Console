@@ -1,21 +1,20 @@
 ﻿namespace SeaBattles.Console.States.Menus
 {
-	internal class PlayingState : IState
+	internal class PlayingState : StateBase<Game>
 	{
-		private readonly Game _game;
 		private readonly SeaBattles.Console.Engine _engine;
 		
 		public PlayingState(Game game, SeaBattles.Console.Engine engine)
+			: base(game)
 		{
-			_game = game;
-
 			_engine = engine;
 		}
-		public void Invoke()
+
+		public override void Invoke()
 		{
 			_engine.Start();
 
-			_game.SetState(new MainMenuState(_game));
+			SetState(new MainMenuState(StateMachine));
 		}
 	}
 }

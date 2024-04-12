@@ -3,7 +3,7 @@ using SeaBattles.Console.Level;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class LoadGameState : IState
+	internal class LoadGameState : UserInputState<Game>
 	{
 		private const string REGEX_EXIT = "^konc$";
 		private const string REGEX_LOAD = @"^\d+$";
@@ -13,37 +13,16 @@ namespace SeaBattles.Console.States.Menus
 		private const string MSG_SAVE_REMOVE_SUCCESS = "ulozeni je uspesne odstraneno";
 		private const string MSG_SAVE_REMOVE_FAIL = "nepodarilo se odstranit ulozeni";
 
-		private readonly Game _game;
-		private readonly InputHandler _inputHandler;
-
 		private readonly List<LevelSave> _saves;
 
-		public LoadGameState(Game game)
+		public LoadGameState(Game game) : base(game)
 		{
-			_game = game;
-
-			_inputHandler = new();
-
-			InitInputHandler();
-
 			_saves = new(LevelSaver.GetSaves());
-		}
-
-		public void Invoke()
-		{
-			Draw();
-
-			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-			if (!_inputHandler.Handle(input))
-			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
-			}
 		}
 
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
 			System.Console.Clear();
 
@@ -72,10 +51,6 @@ namespace SeaBattles.Console.States.Menus
 			}
 
 			System.Console.WriteLine();
-
-			System.Console.WriteLine();
-			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
-			System.Console.WriteLine();
 		}
 
 		#endregion
@@ -88,7 +63,7 @@ namespace SeaBattles.Console.States.Menus
 
 			if(number >= _saves.Count)
 			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
+				StateMsg = MSG_BAD_INPUT;
 				return;
 			}
 
@@ -98,14 +73,14 @@ namespace SeaBattles.Console.States.Menus
 
 			if(data is null)
 			{
-				_game.StateMsg = MSG_SAVE_CORRUPTED;
+				StateMsg = MSG_SAVE_CORRUPTED;
 
 				return;
 			}
 
 			var engine = new Console.Engine(data);
 
-			_game.SetState(new PlayingState(_game, engine));
+			SetState(new PlayingState(StateMachine, engine));
 		}
 
 		private void Remove(string input)
@@ -114,7 +89,7 @@ namespace SeaBattles.Console.States.Menus
 
 			if (number >= _saves.Count)
 			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
+				StateMsg = MSG_BAD_INPUT;
 				return;
 			}
 
@@ -122,13 +97,13 @@ namespace SeaBattles.Console.States.Menus
 
 			if (LevelSaver.Remove(save))
 			{
-				_game.StateMsg = MSG_SAVE_REMOVE_SUCCESS;
+				StateMsg = MSG_SAVE_REMOVE_SUCCESS;
 
 				_saves.Remove(save);
 			}
 			else
 			{
-				_game.StateMsg = MSG_SAVE_REMOVE_FAIL;
+				StateMsg = MSG_SAVE_REMOVE_FAIL;
 			}
 		}
 
@@ -136,11 +111,11 @@ namespace SeaBattles.Console.States.Menus
 
 		#region Initialization
 
-		private void InitInputHandler()
+		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			_inputHandler.Add(REGEX_EXIT, (_) => { _game.SetState(new MainMenuState(_game)); });
-			_inputHandler.Add(REGEX_LOAD, Load);
-			_inputHandler.Add(REGEX_REMOVE, Remove);
+			inputHandler.Add(REGEX_EXIT, (_) => { SetState(new MainMenuState(StateMachine)); });
+			inputHandler.Add(REGEX_LOAD, Load);
+			inputHandler.Add(REGEX_REMOVE, Remove);
 		}
 
 		#endregion

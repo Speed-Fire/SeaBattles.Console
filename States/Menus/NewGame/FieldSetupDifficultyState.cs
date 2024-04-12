@@ -3,73 +3,53 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class FieldSetupDifficultyState : IState
+	internal class FieldSetupDifficultyState : UserInputState<Game>
 	{
-		private const string REGEX_EASY_AI = "^1$";
-		private const string REGEX_NORMAL_AI = "^2$";
-		private const string REGEX_HARD_AI = "^3$";
+		private const string REGEX_AI = @"^\d*$";
 		private const string REGEX_EXIT = @"^konc$";
 
-		private readonly Game _game;
 		private readonly FieldSetup _setup;
 
-		private readonly InputHandler _inputHandler;
-
 		public FieldSetupDifficultyState(Game game, FieldSetup setup)
+			: base(game)
 		{
-			_game = game;
 			_setup = setup;
-
-			_inputHandler = new();
-
-			InitInputHandler();
-		}
-
-		public void Invoke()
-		{
-			Draw();
-
-			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-			if (!_inputHandler.Handle(input))
-			{
-				_game.StateMsg = Console.Game.MSG_BAD_INPUT;
-			}
 		}
 
 		#region Input handlers
 
-		private void SetEasyAI()
+		private void SetAI(string input)
 		{
-			_setup.Difficult = Difficult.Easy;
+			var val = int.Parse(input);
 
-			_game.SetState(new FieldCreatingState(_game, _setup));
-		}
+			if(val < 1 || val > 3)
+			{
+				StateMsg = MSG_BAD_INPUT;
 
-		private void SetNormalAI()
-		{
-			_setup.Difficult = Difficult.Normal;
+				return;
+			}
 
-			_game.SetState(new FieldCreatingState(_game, _setup));
-		}
+			_setup.Difficult = val switch
+			{
+				1 => Difficult.Easy,
+				2 => Difficult.Normal,
+				3 => Difficult.Hard,
+				_ => Difficult.Hard
+			};
 
-		private void SetHardAI()
-		{
-			_setup.Difficult = Difficult.Hard;
-
-			_game.SetState(new FieldCreatingState(_game, _setup));
+			SetState(new FieldCreatingState(StateMachine, _setup));
 		}
 
 		private void Exit()
 		{
-			_game.SetState(new MainMenuState(_game));
+			SetState(new MainMenuState(StateMachine));
 		}
 
 		#endregion
 
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
 			System.Console.Clear();
 
@@ -79,23 +59,17 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.WriteLine("3. Moudry");
 
 			System.Console.WriteLine();
-			System.Console.WriteLine("Pokud se chcete vratit do hladniho menu, zadejte \'konc\'.");
-			System.Console.WriteLine();
-
-			System.Console.WriteLine(_game.StateMsg.PadLeft(15));
-			System.Console.WriteLine();
+			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
 		}
 
 		#endregion
 
 		#region Initialization
 
-		private void InitInputHandler()
+		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			_inputHandler.Add(REGEX_EASY_AI, (_) => { SetEasyAI(); });
-			_inputHandler.Add(REGEX_NORMAL_AI, (_) => { SetNormalAI(); });
-			_inputHandler.Add(REGEX_HARD_AI, (_) => { SetHardAI(); });
-			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
+			inputHandler.Add(REGEX_AI, SetAI);
+			inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 		}
 
 		#endregion

@@ -2,20 +2,19 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-    internal class SavingState : IState
+    internal class SavingState : StateBase<Console.Engine>
     {
-        private readonly Console.Engine _engine;
-
         public SavingState(Console.Engine engine)
+            : base(engine)
         {
-            _engine = engine;
+            
         }
 
-        public void Invoke()
+        public override void Invoke()
         {
-            var res = LevelSaver.Save(_engine.LevelData);
+            var res = LevelSaver.Save(StateMachine.LevelData);
 
-            _engine.SetState(res ? new SavingSuccessState(_engine) : new SavingErrorState(_engine));
+            SetState(res ? new SavingSuccessState(StateMachine) : new SavingErrorState(StateMachine));
         }
     }
 }

@@ -3,41 +3,23 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class PlayerMoveState : IState
+	internal class PlayerMoveState : UserInputState<Console.Engine>
 	{
 		private const string REGEX_SAVE_AND_EXIT = "^uloz$";
 		private const string REGEX_USE_HINT = "^nap$";
 		private const string REGEX_MOVE = @"^[a-zA-Z]\s*\d{1,2}$";
 		private const string REGEX_EXIT = @"^konc$";
 
-		private readonly Console.Engine _engine;
+		private string _moveMsg = string.Empty;
 
-		private readonly InputHandler _inputHandler;
-
-		public PlayerMoveState(Console.Engine engine)
+		public PlayerMoveState(Console.Engine engine) : base(engine)
 		{
-			_engine = engine;
 
-			_inputHandler = new InputHandler();
-
-			InitInputHandler();
-		}
-
-		public void Invoke()
-		{
-			Draw();
-
-			var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-			if (!_inputHandler.Handle(input))
-			{
-				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
-			}
 		}
 
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
 			System.Console.Clear();
 
@@ -51,23 +33,22 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '=') + exitTipStr);
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"Napovedy: {_engine.LevelData.RemainingHintCount}. Pis \'nap\'");
+			System.Console.WriteLine($"Napovedy: {StateMachine.LevelData.RemainingHintCount}. Pis \'nap\'");
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {StateMachine.LevelData.UserField.ShipCount,-2}               {StateMachine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.LevelData.CompField, true, _engine.LevelData.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(StateMachine.LevelData.CompField, true, StateMachine.LevelData.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
-			System.Console.WriteLine();
 
-			System.Console.WriteLine(_engine.StateMsg.PadLeft(15));
+			System.Console.WriteLine(_moveMsg.PadLeft(15));
 			System.Console.WriteLine();
 		}
 
@@ -77,30 +58,26 @@ namespace SeaBattles.Console.States.Engine
 
 		private void TakeMove(string input)
 		{
-			if (!ShipCoordinateParser.TryParse(input, _engine.LevelData.CompField.Size, out var x, out var y))
+			if (!ShipCoordinateParser.TryParse(input, StateMachine.LevelData.CompField.Size, out var x, out var y))
 			{
-				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
-
-				//_engine.SetState(new PlayerMoveState(_engine));
+				StateMsg = MSG_BAD_INPUT;
 
 				return;
 			}
 
-			if (_engine.LevelData.CompField[x, y] == CellState.Attacked ||
-				_engine.LevelData.CompField[x, y] == CellState.Destroyed)
+			if (StateMachine.LevelData.CompField[x, y] == CellState.Attacked ||
+				StateMachine.LevelData.CompField[x, y] == CellState.Destroyed)
 			{
-				_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
-
-				//_engine.SetState(new PlayerMoveState(_engine));
+				StateMsg = MSG_BAD_INPUT;
 
 				return;
 			}
 
-			var res = _engine.LevelData.CompField.Attack((uint)x, (uint)y);
+			var res = StateMachine.LevelData.CompField.Attack((uint)x, (uint)y);
 
-			if (_engine.LevelData.CompField.IsEmpty)
+			if (StateMachine.LevelData.CompField.IsEmpty)
 			{
-				_engine.SetState(new VictoryState(_engine));
+				SetState(new VictoryState(StateMachine, Console.Engine.MSG_SHIP_DESTROYED));
 
 				return;
 			}
@@ -109,27 +86,19 @@ namespace SeaBattles.Console.States.Engine
 			{
 				case AttackResult.Failed:
 				default:
-					_engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
-
-					//_engine.SetState(new PlayerMoveState(_engine));
+					StateMsg = MSG_BAD_INPUT;
 
 					return;
 				case AttackResult.Missed:
-					_engine.StateMsg = Console.Engine.MSG_FIRE_MISSED;
-
-					_engine.SetState(new PlayerMoveResultState(_engine));
+					StateMachine.SetState(new PlayerMoveResultState(StateMachine, Console.Engine.MSG_FIRE_MISSED));
 
 					return;
 				case AttackResult.Hitten:
-					_engine.StateMsg = Console.Engine.MSG_SHIP_HIT;
-
-					//_engine.SetState(new PlayerMoveState(_engine));
+					_moveMsg = Console.Engine.MSG_SHIP_HIT;
 
 					return;
 				case AttackResult.Destroyed:
-					_engine.StateMsg = Console.Engine.MSG_SHIP_DESTROYED;
-
-					//_engine.SetState(new PlayerMoveState(_engine));
+					_moveMsg = Console.Engine.MSG_SHIP_DESTROYED;
 
 					return;
 			}
@@ -137,39 +106,38 @@ namespace SeaBattles.Console.States.Engine
 
 		private void SaveAndExit()
 		{
-			_engine.SetState(new SavingState(_engine));
+			SetState(new SavingState(StateMachine));
 		}
 
 		private void UseHint()
 		{
-			if (_engine.LevelData.RemainingHintCount <= 0)
+			if (StateMachine.LevelData.RemainingHintCount <= 0)
 				return;
 
 			while (true)
 			{
-				var hint = _engine.LevelData.CompField.GetRandomShipCell();
+				var hint = StateMachine.LevelData.CompField.GetRandomShipCell();
 
-				if (hint is null || _engine.LevelData.AddHint(hint.Value))
+				if (hint is null || StateMachine.LevelData.AddHint(hint.Value))
 					break;
 			}
-			//_engine.SetState(new PlayerMoveState(_engine));
 		}
 
 		private void Exit()
 		{
-			_engine.SetState(null);
+			SetState(null);
 		}
 
 		#endregion
 
 		#region Initialization
 
-		private void InitInputHandler()
+		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			_inputHandler.Add(REGEX_MOVE, TakeMove);
-			_inputHandler.Add(REGEX_USE_HINT, (_) => { UseHint(); });
-			_inputHandler.Add(REGEX_SAVE_AND_EXIT, (_) => { SaveAndExit(); });
-			_inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
+			inputHandler.Add(REGEX_MOVE, TakeMove);
+			inputHandler.Add(REGEX_USE_HINT, (_) => { UseHint(); });
+			inputHandler.Add(REGEX_SAVE_AND_EXIT, (_) => { SaveAndExit(); });
+			inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 		}
 
 		#endregion

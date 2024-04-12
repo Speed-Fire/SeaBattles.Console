@@ -2,32 +2,17 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-    internal class SavingErrorState : IState
+    internal class SavingErrorState : UserInputState<Console.Engine>
     {
-        private readonly Console.Engine _engine;
-        private readonly InputHandler _inputHandler;
-
         public SavingErrorState(Console.Engine engine)
+            : base(engine)
         {
-            _engine = engine;
-            _inputHandler = new();
 
-            InitInputHandler();
         }
 
-        public void Invoke()
-        {
-            Draw();
+		#region Drawing
 
-            var input = (System.Console.ReadLine() ?? string.Empty).Trim();
-
-            if (!_inputHandler.Handle(input))
-            {
-                _engine.StateMsg = Console.Engine.MSG_BAD_INPUT;
-            }
-        }
-
-        private void Draw()
+		protected override void Draw()
         {
             System.Console.Clear();
 
@@ -38,16 +23,18 @@ namespace SeaBattles.Console.States.Engine
             System.Console.WriteLine("Chcete se vratit ke hre? (a/n)");
 
             System.Console.WriteLine();
-            System.Console.WriteLine();
-
-            System.Console.WriteLine(_engine.StateMsg.PadLeft(15));
-            System.Console.WriteLine();
         }
 
-        private void InitInputHandler()
+		#endregion
+
+		#region Initialization
+
+		protected override void InitInputHandler(InputHandler inputHandler)
         {
-            _inputHandler.Add(@"^a$", (_) => { _engine.SetState(new PlayerMoveState(_engine)); });
-            _inputHandler.Add(@"^n$", (_) => { _engine.SetState(null); });
+            inputHandler.Add(@"^a$", (_) => { SetState(new PlayerMoveState(StateMachine)); });
+            inputHandler.Add(@"^n$", (_) => { SetState(null); });
         }
-    }
+
+		#endregion
+	}
 }

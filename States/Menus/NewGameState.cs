@@ -4,24 +4,23 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class NewGameState : IState
+	internal class NewGameState : StateBase<Game>
 	{
-		private readonly Game _game;
 		private readonly BattleField _userField;
 		private readonly FieldSetup _fieldSetup;
 
 		private readonly IFieldFactory _fieldFactory;
 
 		public NewGameState(Game game, BattleField userField, FieldSetup fieldSetup)
+			: base(game)
 		{
-			_game = game;
 			_userField = userField;
 			_fieldSetup = fieldSetup;
 
 			_fieldFactory = new ComputerFieldFactory();
 		}
 
-		public void Invoke()
+		public override void Invoke()
 		{
 			var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
 
@@ -29,7 +28,7 @@ namespace SeaBattles.Console.States.Menus
 
 			var engine = new Console.Engine(levelData);
 
-			_game.SetState(new PlayingState(_game, engine));
+			SetState(new PlayingState(StateMachine, engine));
 		}
 
 		private AIPlayer GetAI(BattleField userField)

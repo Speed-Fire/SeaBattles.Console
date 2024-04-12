@@ -1,29 +1,21 @@
-﻿
+﻿using SeaBattles.Console.Input;
 using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
-	internal class VictoryState : IState
+	internal class VictoryState : UserInputState<Console.Engine>
 	{
-		private readonly Console.Engine _engine;
+		private readonly string _moveMsg;
 
-		public VictoryState(Console.Engine engine)
+		public VictoryState(Console.Engine engine, string moveMsg)
+			: base(engine)
 		{
-			_engine = engine;
-		}
-
-		public void Invoke()
-		{
-			Draw();
-
-			System.Console.ReadLine();
-
-			_engine.SetState(null);
+			_moveMsg = moveMsg;
 		}
 
 		#region Drawing
 
-		private void Draw()
+		protected override void Draw()
 		{
 			System.Console.Clear();
 
@@ -37,21 +29,30 @@ namespace SeaBattles.Console.States.Engine
 
 			System.Console.WriteLine("Zbyva lodi:");
 			System.Console.WriteLine("   Vase          Pocitacove");
-			System.Console.WriteLine($"    {_engine.LevelData.UserField.ShipCount,-2}               {_engine.LevelData.CompField.ShipCount,-2}");
+			System.Console.WriteLine($"    {StateMachine.LevelData.UserField.ShipCount,-2}               {StateMachine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			BattlefieldDrawer.Draw(_engine.LevelData.CompField, true, _engine.LevelData.Hints); // set false only to debug purpose
+			BattlefieldDrawer.Draw(StateMachine.LevelData.CompField, true, StateMachine.LevelData.Hints); // set false only to debug purpose
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();
 
-			System.Console.WriteLine(_engine.StateMsg.PadLeft(15));
+			System.Console.WriteLine(_moveMsg.PadLeft(15));
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Pokracujte stiskem libovolne klavesy...");
+		}
+
+		#endregion
+
+		#region Initialization
+
+		protected override void InitInputHandler(InputHandler inputHandler)
+		{
+			inputHandler.Add("^.*$", (_) => { SetState(null); });
 		}
 
 		#endregion
