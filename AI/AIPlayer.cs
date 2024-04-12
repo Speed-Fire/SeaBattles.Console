@@ -1,9 +1,7 @@
 ﻿using SeaBattles.Console.Misc;
-using System.Runtime.Serialization;
 
 namespace SeaBattles.Console.AI
 {
-	[DataContract]
 	internal abstract class AIPlayer
 	{
 		protected readonly BattleField _field;

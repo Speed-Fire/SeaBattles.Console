@@ -1,15 +1,18 @@
-﻿using System.Runtime.Serialization;
-
-namespace SeaBattles.Console.AI
+﻿namespace SeaBattles.Console.AI
 {
-	[DataContract]
 	internal class AIPlayerHard : AIPlayerNormal
 	{
 		public AIPlayerHard(BattleField field) : base(field)
 		{
 		}
 
-		protected override bool IsItWorthToAttackThisPoint(int x, int y)
+        public AIPlayerHard(BattleField field, LastLucklyAttack? lastLucklyAttack)
+			: base(field, lastLucklyAttack)
+        {
+            
+        }
+
+        protected override bool IsItWorthToAttackThisPoint(int x, int y)
 		{
 			var dirs = new (int, int)[] { (-1, -1), (1, -1), (1, -1), 
 				(1, 1), (1, 0), (-1, 0), (0, 1), (0, -1) };

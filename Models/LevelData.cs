@@ -1,25 +1,17 @@
 ﻿using SeaBattles.Console.AI;
-using System.Runtime.Serialization;
 
 namespace SeaBattles.Console.Models
 {
-	[DataContract]
 	internal class LevelData
 	{
-		[DataMember]
 		public AIPlayer AI { get; }
-
-		[DataMember]
 		public BattleField UserField { get; }
 
-		[DataMember]
 		public BattleField CompField { get; }
 
-		[DataMember]
 		private readonly List<(int, int)> _hints;
 		public IReadOnlyList<(int, int)> Hints => _hints;
 
-		[DataMember]
 		public int RemainingHintCount { get; private set; }
 
 

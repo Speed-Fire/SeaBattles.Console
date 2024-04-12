@@ -1,5 +1,4 @@
-﻿using System;
-using SeaBattles.Console.Level;
+﻿using SeaBattles.Console.Level;
 
 namespace SeaBattles.Console.States.Engine
 {
@@ -14,7 +13,7 @@ namespace SeaBattles.Console.States.Engine
 
         public void Invoke()
         {
-            var res = LevelSerializer.Serialize(_engine.LevelData);
+            var res = LevelSaver.Save(_engine.LevelData);
 
             _engine.SetState(res ? new SavingSuccessState(_engine) : new SavingErrorState(_engine));
         }

@@ -1,16 +1,11 @@
-﻿using SeaBattles.Console.FieldFillers;
-using System.Runtime.Serialization;
-using System.Text;
+﻿using System.Text;
 
 namespace SeaBattles.Console
 {
-	[DataContract]
     public class BattleField
 	{
-		[DataMember]
 		public CellState[,] Field { get; }
 
-		[DataMember]
 		public int Size { get; }
 
 		public int ShipCount => _ships.Count;
@@ -141,17 +136,6 @@ namespace SeaBattles.Console
 			}
 
 			return sb.ToString();
-		}
-
-		[OnDeserialized]
-		private void InitShipCountField()
-		{
-			var (field, dict) = FieldShipCalculator.CreateShipCountField(Size, Field);
-
-			_shipCountField = field;
-			_ships = dict;
-
-			ShipCellCount = CalculateShipCellCount();
 		}
 	}
 }
