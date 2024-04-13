@@ -3,6 +3,6 @@
 	internal class FieldSetup
 	{
 		public int Size { get; set; }
-		public Difficult Difficult { get; set; }
+		public Difficulty Difficulty { get; set; }
 	}
 }

@@ -29,12 +29,12 @@ namespace SeaBattles.Console.States.Menus
 				return;
 			}
 
-			_setup.Difficult = val switch
+			_setup.Difficulty = val switch
 			{
-				1 => Difficult.Easy,
-				2 => Difficult.Normal,
-				3 => Difficult.Hard,
-				_ => Difficult.Hard
+				1 => Difficulty.Easy,
+				2 => Difficulty.Normal,
+				3 => Difficulty.Hard,
+				_ => Difficulty.Hard
 			};
 
 			SetState(new FieldCreatingState(StateMachine, _setup));

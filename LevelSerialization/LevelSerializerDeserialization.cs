@@ -5,7 +5,7 @@ using SeaBattles.Console.Models;
 namespace SeaBattles.Console.Level
 {
 	internal record LevelHeader(/*DateTime DateTime,*/
-		int Size, Difficult Difficulty);
+		int Size, Difficulty Difficulty);
 
 	internal partial class LevelSerializer
 	{
@@ -39,9 +39,9 @@ namespace SeaBattles.Console.Level
 
 				AIPlayer ai = header.Difficulty switch
 				{
-					Difficult.Easy => new AIPlayerEasy(uField),
-					Difficult.Normal => new AIPlayerNormal(uField, aiData),
-					Difficult.Hard => new AIPlayerHard(uField, aiData),
+					Difficulty.Easy => new AIPlayerEasy(uField),
+					Difficulty.Normal => new AIPlayerNormal(uField, aiData),
+					Difficulty.Hard => new AIPlayerHard(uField, aiData),
 					_ => throw new Exception()
 				};
 
@@ -134,7 +134,7 @@ namespace SeaBattles.Console.Level
 			var data = GetBlockData(block);
 
 			//var datetime = DateTime.Parse(data[BLOCK_HEADER_DATETIME]);
-			var difficulty = (Difficult)int.Parse(data[BLOCK_HEADER_DIFFICULTY]);
+			var difficulty = (Difficulty)int.Parse(data[BLOCK_HEADER_DIFFICULTY]);
 			var size = int.Parse(data[BLOCK_HEADER_SIZE]);
 
 			return new(/*datetime, */size, difficulty);

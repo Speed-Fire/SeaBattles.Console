@@ -2,7 +2,7 @@
 
 namespace SeaBattles.Console.Level
 {
-	internal record LevelSave(LevelHeader Header, DateTime Creaated, string Path);
+	internal record LevelSave(LevelHeader Header, DateTime Created, string Path);
 
 	internal class LevelSaver
 	{

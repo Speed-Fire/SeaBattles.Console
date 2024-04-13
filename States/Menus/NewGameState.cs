@@ -33,10 +33,10 @@ namespace SeaBattles.Console.States.Menus
 
 		private AIPlayer GetAI(BattleField userField)
 		{
-			return _fieldSetup.Difficult switch
+			return _fieldSetup.Difficulty switch
 			{
-				Difficult.Normal => new AIPlayerNormal(userField),
-				Difficult.Hard => new AIPlayerHard(userField),
+				Difficulty.Normal => new AIPlayerNormal(userField),
+				Difficulty.Hard => new AIPlayerHard(userField),
 				_ => new AIPlayerEasy(userField),
 			};
 		}
