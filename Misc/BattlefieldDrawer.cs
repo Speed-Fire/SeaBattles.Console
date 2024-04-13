@@ -15,8 +15,6 @@
         internal static void Draw(CellState[,] field, int size, bool hideShips = false,
             IReadOnlyList<(int, int)>? hints = null)
         {
-            //var size = size;
-
             System.Console.Write("  ");
             for (int i = 0; i < size; i++)
             {
@@ -24,7 +22,9 @@
             }
             System.Console.WriteLine();
 
-            for (int i = 0; i < size; i++)
+            var color = System.Console.ForegroundColor;
+
+			for (int i = 0; i < size; i++)
             {
                 System.Console.Write((char)('a' + i));
                 System.Console.Write(' ');
@@ -37,22 +37,35 @@
                             System.Console.Write(CELL_EMPTY);
                             break;
                         case CellState.Ship:
-                            if (hideShips && (hints is null || !hints.Contains((i, j))))
+							if (hideShips && (hints is null || !hints.Contains((i, j))))
                             {
 								System.Console.Write(CELL_EMPTY);
 							}
                             else
                             {
-                                System.Console.Write(CELL_SHIP);
+								if (hints is not null && hints.Contains((i, j)))
+                                    System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+
+								System.Console.Write(CELL_SHIP);
+
+                                System.Console.ForegroundColor = color;
 							}
 
                             break;
                         case CellState.Attacked:
-                            System.Console.Write(CELL_ATTACKED);
-                            break;
+                            System.Console.ForegroundColor = ConsoleColor.Cyan;
+
+							System.Console.Write(CELL_ATTACKED);
+
+							System.Console.ForegroundColor = color;
+							break;
                         case CellState.Destroyed:
-                            System.Console.Write(CELL_DESTROYED);
-                            break;
+							System.Console.ForegroundColor = ConsoleColor.DarkRed;
+
+							System.Console.Write(CELL_DESTROYED);
+
+							System.Console.ForegroundColor = color;
+							break;
                     }
                 }
 

@@ -54,9 +54,27 @@ namespace SeaBattles.Console.States.Menus
 			System.Console.Clear();
 
 			System.Console.WriteLine("Zvolte si rozum Umele Inteligence:");
-			System.Console.WriteLine("1. Hloupy");
-			System.Console.WriteLine("2. Chytry");
-			System.Console.WriteLine("3. Moudry");
+
+			var color = System.Console.ForegroundColor;
+
+			System.Console.Write("1. ");
+
+			System.Console.ForegroundColor = ConsoleColor.DarkGreen;
+			System.Console.WriteLine("Hloupy");
+			System.Console.ForegroundColor = color;
+
+			System.Console.Write("2. ");
+
+			System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+			System.Console.WriteLine("Chytry");
+			System.Console.ForegroundColor = color;
+
+			System.Console.Write("3. ");
+
+			System.Console.ForegroundColor = ConsoleColor.DarkRed;
+			System.Console.WriteLine("Moudry");
+			System.Console.ForegroundColor = color;
+
 
 			System.Console.WriteLine();
 			System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");

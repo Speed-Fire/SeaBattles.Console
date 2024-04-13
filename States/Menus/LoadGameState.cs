@@ -39,15 +39,22 @@ namespace SeaBattles.Console.States.Menus
 			var i = 1;
 			foreach(var save in _saves)
 			{
-				var aiMind = save.Header.Difficulty switch
+				var (aiMind, mindColor) = save.Header.Difficulty switch
 				{
-					Models.Difficult.Easy =>   "Hloupy",
-					Models.Difficult.Normal => "Chytry",
-					Models.Difficult.Hard =>   "Moudry",
+					Models.Difficult.Easy =>   ("Hloupy", ConsoleColor.DarkGreen),
+					Models.Difficult.Normal => ("Chytry", ConsoleColor.DarkYellow),
+					Models.Difficult.Hard =>   ("Moudry", ConsoleColor.DarkRed),
 					_ => throw new Exception()
 				};
 
-				System.Console.WriteLine($"    {i++}    |  {save.Creaated:dd.MM.yyyy HH:mm}  |    {save.Header.Size,-2}    |  {aiMind}  ");
+				System.Console.Write($"    {i++}    |  {save.Creaated:dd.MM.yyyy HH:mm}  |    {save.Header.Size,-2}    |  ");
+
+				var color = System.Console.ForegroundColor;
+				System.Console.ForegroundColor = mindColor;
+
+				System.Console.WriteLine($"{aiMind}  ");
+
+				System.Console.ForegroundColor = color;
 			}
 
 			System.Console.WriteLine();

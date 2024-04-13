@@ -21,9 +21,15 @@ namespace SeaBattles.Console.States.Engine
 
 			System.Console.WriteLine();
 
+			var color = System.Console.ForegroundColor;
+
+			System.Console.ForegroundColor = ConsoleColor.DarkRed;
+
 			System.Console.WriteLine("=======================");
 			System.Console.WriteLine("====    PORAZKA    ====");
 			System.Console.WriteLine("=======================");
+
+			System.Console.ForegroundColor = color;
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();

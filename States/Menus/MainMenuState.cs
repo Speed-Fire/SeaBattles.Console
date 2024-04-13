@@ -15,7 +15,7 @@ namespace SeaBattles.Console.States.Menus
 		{
 			System.Console.Clear();
 
-			System.Console.WriteLine("Vitam Vas ve hre Lode!");
+			System.Console.WriteLine("    Vitam Vas ve hre Lode!");
 			System.Console.WriteLine("Zvolte prosim cislo pro pokracovani:");
 			System.Console.WriteLine("1. Nova hra");
 			System.Console.WriteLine("2. Nahrat hru");

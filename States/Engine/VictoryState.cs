@@ -19,9 +19,15 @@ namespace SeaBattles.Console.States.Engine
 		{
 			System.Console.Clear();
 
+			var color = System.Console.ForegroundColor;
+
+			System.Console.ForegroundColor = ConsoleColor.DarkGreen;
+
 			System.Console.WriteLine("=======================");
 			System.Console.WriteLine("====     VYHRA     ====");
 			System.Console.WriteLine("=======================");
+
+			System.Console.ForegroundColor = color;
 
 			System.Console.WriteLine();
 			System.Console.WriteLine();

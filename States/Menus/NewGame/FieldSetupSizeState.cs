@@ -41,6 +41,10 @@ namespace SeaBattles.Console.States.Menus
 			{
 				SetState(new FieldSetupDifficultyState(StateMachine, new FieldSetup() { Size = size }));
 			}
+			else
+			{
+				StateMsg = MSG_BAD_INPUT;
+			}
 		}
 
 		private void Exit()

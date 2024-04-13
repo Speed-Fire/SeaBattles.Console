@@ -52,9 +52,14 @@ namespace SeaBattles.Console.States
 		{
 			Draw();
 
+			var color = System.Console.ForegroundColor;
+			System.Console.ForegroundColor = ConsoleColor.DarkRed;
+
 			System.Console.WriteLine();
 			System.Console.WriteLine(StateMsg.PadLeft(15));
 			System.Console.WriteLine();
+
+			System.Console.ForegroundColor = color;
 		}
 
 		protected abstract void Draw();
