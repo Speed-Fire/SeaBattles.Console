@@ -13,7 +13,7 @@ namespace SeaBattles.Console.Level
 		private const string SAVE_NAME_TEMPLATE = "seabattle";
 		private const string SAVE_NAME_SEARCH_PATTERN = $"{SAVE_NAME_TEMPLATE}*";
 
-		private const int MAX_SAVE_COUNT = 3;
+		private const int MAX_SAVE_COUNT = 9;
 
 		public static bool Save(LevelData levelData)
 		{
