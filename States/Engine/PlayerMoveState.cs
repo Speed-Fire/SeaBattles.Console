@@ -33,7 +33,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '=') + exitTipStr);
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"Napovedy: {StateMachine.LevelData.RemainingHintCount}. Pis \'nap\'");
+			System.Console.WriteLine($"Napovedy: {StateMachine.LevelData.RemainingHintCount}. {(StateMachine.LevelData.RemainingHintCount > 0 ? "Pis \'nap\'" : string.Empty)}");
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Zbyva lodi:");

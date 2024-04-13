@@ -31,6 +31,10 @@ namespace SeaBattles.Console.Level
 		{
 			var saves = new List<LevelSave>();
 
+			var dirpath = DIRECTORY;
+			if (!Directory.Exists(dirpath))
+				Directory.CreateDirectory(dirpath);
+
 			foreach (var file in Directory.EnumerateFiles(DIRECTORY, SAVE_NAME_SEARCH_PATTERN))
 			{
 				var header = LevelSerializer.DeserializeHeader(file);

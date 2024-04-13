@@ -109,7 +109,8 @@ namespace SeaBattles.Console.States.Menus
 			if (ShipCoordinateParser.TryParse(input, _filler.Size, out var x, out var y,
 					out var direction, out var shipSize))
 			{
-				_filler.PutShip(x, y, shipSize, direction);
+				if(!_filler.PutShip(x, y, shipSize, direction))
+					StateMsg = MSG_BAD_INPUT;
 			}
 			else
 			{
