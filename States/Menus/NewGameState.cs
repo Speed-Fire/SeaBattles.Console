@@ -4,41 +4,58 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.States.Menus
 {
-	internal class NewGameState : StateBase<Game>
-	{
-		private readonly BattleField _userField;
-		private readonly FieldSetup _fieldSetup;
+    /// <summary>
+    /// Trida reprezentujici stav nove hry.
+    /// </summary>
+    internal class NewGameState : StateBase<Game>
+    {
+        private readonly BattleField _userField;
+        private readonly FieldSetup _fieldSetup;
 
-		private readonly IFieldFactory _fieldFactory;
+        private readonly IFieldFactory _fieldFactory;
 
-		public NewGameState(Game game, BattleField userField, FieldSetup fieldSetup)
-			: base(game)
-		{
-			_userField = userField;
-			_fieldSetup = fieldSetup;
+        /// <summary>
+        /// Konstruktor tridy NewGameState.
+        /// </summary>
+        /// <param name="game">Instance hry.</param>
+        /// <param name="userField">Hraci pole hrace.</param>
+        /// <param name="fieldSetup">Nastaveni pole.</param>
+        public NewGameState(Game game, BattleField userField, FieldSetup fieldSetup)
+            : base(game)
+        {
+            _userField = userField;
+            _fieldSetup = fieldSetup;
 
-			_fieldFactory = new ComputerFieldFactory();
-		}
+            _fieldFactory = new ComputerFieldFactory();
+        }
 
-		public override void Invoke()
-		{
-			var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
+        /// <summary>
+        /// Spusti novou hru.
+        /// </summary>
+        public override void Invoke()
+        {
+            var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
 
-			var levelData = new LevelData(GetAI(_userField), _userField, compField);
+            var levelData = new LevelData(GetAI(_userField), _userField, compField);
 
-			var engine = new Console.Engine(levelData);
+            var engine = new Console.Engine(levelData);
 
-			SetState(new PlayingState(StateMachine, engine));
-		}
+            SetState(new PlayingState(StateMachine, engine));
+        }
 
-		private AIPlayer GetAI(BattleField userField)
-		{
-			return _fieldSetup.Difficulty switch
-			{
-				Difficulty.Normal => new AIPlayerNormal(userField),
-				Difficulty.Hard => new AIPlayerHard(userField),
-				_ => new AIPlayerEasy(userField),
-			};
-		}
-	}
+        /// <summary>
+        /// Ziska umelou inteligenci pro hru na zaklade obtiznosti.
+        /// </summary>
+        /// <param name="userField">Hraci pole hrace.</param>
+        /// <returns>Instance tridy AIPlayer odpovidajici obtiznosti.</returns>
+        private AIPlayer GetAI(BattleField userField)
+        {
+            return _fieldSetup.Difficulty switch
+            {
+                Difficulty.Normal => new AIPlayerNormal(userField),
+                Difficulty.Hard => new AIPlayerHard(userField),
+                _ => new AIPlayerEasy(userField),
+            };
+        }
+    }
 }

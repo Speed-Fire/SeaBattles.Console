@@ -1,11 +1,30 @@
 ﻿namespace SeaBattles.Console
 {
-	public enum CellState
-	{
-		Empty,
-		Ship,
-		Attacked,
-		Destroyed,
-		//Unknown
-	}
+    /// <summary>
+    /// Vycet reprezentujici stav bunky na herni plose.
+    /// </summary>
+    public enum CellState
+    {
+        /// <summary>
+        /// Prazdna bunka.
+        /// </summary>
+        Empty,
+
+        /// <summary>
+        /// Bunka obsahuje lod.
+        /// </summary>
+        Ship,
+
+        /// <summary>
+        /// Bunka byla napadena, ale lod nebyla zasazena.
+        /// </summary>
+        Attacked,
+
+        /// <summary>
+        /// Lod v bunce byla zasazena a znicena.
+        /// </summary>
+        Destroyed,
+
+    }
+
 }

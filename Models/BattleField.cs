@@ -2,140 +2,179 @@
 
 namespace SeaBattles.Console
 {
+    /// <summary>
+    /// Trida reprezentujici bitevni pole.
+    /// </summary>
     public class BattleField
-	{
-		public CellState[,] Field { get; }
+    {
+        /// <summary>
+        /// Pole obsahujici stav jednotlivych bunk na bitevnim poli.
+        /// </summary>
+        public CellState[,] Field { get; }
 
-		public int Size { get; }
+        /// <summary>
+        /// Velikost bitevniho pole.
+        /// </summary>
+        public int Size { get; }
 
-		public int ShipCount => _ships.Count;
-		public bool IsEmpty => //ShipCellCount == 0; 
-			ShipCount == 0;
+        /// <summary>
+        /// Pocet lodi na bitevnim poli.
+        /// </summary>
+        public int ShipCount => _ships.Count;
 
-		private int ShipCellCount { get; set; } // count of cells with ships: a 4-long ship is 4 cells
+        /// <summary>
+        /// Indikuje, zda je bitevni pole prazdne (neobsahuje zadne lode).
+        /// </summary>
+        public bool IsEmpty => ShipCount == 0;
 
-		private Dictionary<int, int> _ships;
-		private int[,] _shipCountField;
+        /// <summary>
+        /// Pocet obsazenych lodemi bunek.
+        /// </summary>
+        private int ShipCellCount { get; set; }
 
-		internal BattleField(int size, CellState[,] field,
-			int[,] shipCountField, Dictionary<int, int> ships)
-		{
-			Field = field;
-			
-			_shipCountField = shipCountField;
-			_ships = ships;
+        /// <summary>
+        /// Pomocna mapa pro _shipCountField.
+        /// </summary>
+        private readonly Dictionary<int, int> _ships;
 
-			Size = size;
+        /// <summary>
+        /// Dodatecne pole pro rychle pocitani poctu plavbyschopnych lodi.
+        /// </summary>
+        private readonly int[,] _shipCountField;
 
-			ShipCellCount = CalculateShipCellCount();
-		}
+        internal BattleField(int size, CellState[,] field, int[,] shipCountField, Dictionary<int, int> ships)
+        {
+            Field = field;
 
-		public CellState this[int x, int y]
-		{
-			get => Field[x, y];
-		}
+            _shipCountField = shipCountField;
+            _ships = ships;
 
-		internal AttackResult Attack(uint x, uint y)
-		{
-			if (x >= Size || y >= Size)
-				throw new ArgumentOutOfRangeException();
+            Size = size;
 
-			var shipCount = ShipCount;
+            ShipCellCount = CalculateShipCellCount();
+        }
 
-			switch(Field[x, y])
-			{
-				case CellState.Empty:
-					Field[x, y] = CellState.Attacked;
-					return AttackResult.Missed;
+        /// <summary>
+        /// Indexer pro pristup k bunecnemu stavu na zaslaných souradnicích.
+        /// </summary>
+        public CellState this[int x, int y] => Field[x, y];
 
-				case CellState.Attacked:
-				case CellState.Destroyed:
-				//case CellState.Unknown:
-					return AttackResult.Failed;
+        /// <summary>
+        /// Provede utok na zadanou bunku na bitevnim poli.
+        /// </summary>
+        internal AttackResult Attack(uint x, uint y)
+        {
+            if (x >= Size || y >= Size)
+                throw new ArgumentOutOfRangeException();
 
-				case CellState.Ship:
-					Field[x, y] = CellState.Destroyed;
-					ShipCellCount--;
+            var shipCount = ShipCount;
 
-					RecalculateShipCount(x, y);
+            switch (Field[x, y])
+            {
+                case CellState.Empty:
+                    Field[x, y] = CellState.Attacked;
+                    return AttackResult.Missed;
 
-					return shipCount == ShipCount ? AttackResult.Hitten : AttackResult.Destroyed;
-			}
+                case CellState.Attacked:
+                case CellState.Destroyed:
+                    return AttackResult.Failed;
 
-			return AttackResult.Failed;
-		}
+                case CellState.Ship:
+                    Field[x, y] = CellState.Destroyed;
+                    ShipCellCount--;
 
-		internal (int, int)? GetRandomShipCell()
-		{
-			if (ShipCellCount == 0)
-				return null;
+                    RecalculateShipCount(x, y);
 
-			var rand = new Random();
-			var cellNumber = rand.Next(0, ShipCellCount);
+                    return shipCount == ShipCount ? AttackResult.Hitten : AttackResult.Destroyed;
+            }
 
-			var iter = 0;
+            return AttackResult.Failed;
+        }
 
-			for (int i = 0; i < Size; i++)
-			{
-				for (int j = 0; j < Size; j++)
-				{
-					if (Field[i, j] == CellState.Ship)
-					{
-						if (iter++ == cellNumber)
-							return (i, j);
-					}
-				}
-			}
+        /// <summary>
+        /// Vrati nahodnou bunku obsahujici lod.
+        /// </summary>
+        internal (int, int)? GetRandomShipCell()
+        {
+            if (ShipCellCount == 0)
+                return null;
 
-			return null;
-		}
+            var rand = new Random();
+            var cellNumber = rand.Next(0, ShipCellCount);
 
-		private void RecalculateShipCount(uint x, uint y)
-		{
-			var number = _shipCountField[x, y];
+            var iter = 0;
 
-			if (number == 0)
-				return;
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (Field[i, j] == CellState.Ship)
+                    {
+                        if (iter++ == cellNumber)
+                            return (i, j);
+                    }
+                }
+            }
 
-			_shipCountField[x, y] = 0;
+            return null;
+        }
 
-			if (--_ships[number] <= 0)
-				_ships.Remove(number);
-		}
+        /// <summary>
+        /// Prepocita pocet bunek obsahujicich lode po utoku na zaslane souradnice.
+        /// </summary>
+        private void RecalculateShipCount(uint x, uint y)
+        {
+            var number = _shipCountField[x, y];
 
-		private int CalculateShipCellCount()
-		{
-			var res = 0;
+            if (number == 0)
+                return;
 
-			for(int i = 0; i < Size; i++)
-			{
-				for(int j = 0; j < Size; j++)
-				{
-					if (Field[i, j] == CellState.Ship)
-						res++;
-				}
-			}
+            _shipCountField[x, y] = 0;
 
-			return res;
-		}
+            if (--_ships[number] <= 0)
+                _ships.Remove(number);
+        }
 
-		public override string ToString()
-		{
-			var sb = new StringBuilder();
+        /// <summary>
+        /// Spocita celkovy pocet bunek obsahujicich lode.
+        /// </summary>
+        private int CalculateShipCellCount()
+        {
+            var res = 0;
 
-			for(int i = 0; i < Size; i++)
-			{
-				for(int j = 0; j < Size; j++)
-				{
-					var ch = (char)('0' + Field[i, j]);
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    if (Field[i, j] == CellState.Ship)
+                        res++;
+                }
+            }
 
-					sb.Append(ch);
-				}
+            return res;
+        }
 
-				sb.Append(Environment.NewLine);
-			}
+        /// <summary>
+        /// Prevede stav bitevniho pole na retezec.
+        /// </summary>
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
 
-			return sb.ToString();
-		}
-	}
+            for (int i = 0; i < Size; i++)
+            {
+                for (int j = 0; j < Size; j++)
+                {
+                    var ch = (char)('0' + Field[i, j]);
+
+                    sb.Append(ch);
+                }
+
+                sb.Append(Environment.NewLine);
+            }
+
+            return sb.ToString();
+        }
+    }
+
 }

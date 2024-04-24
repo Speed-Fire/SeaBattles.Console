@@ -2,21 +2,35 @@
 
 namespace SeaBattles.Console
 {
-	internal abstract class StateMachine
-	{
-		protected IState? CurrentState { get; set; }
+    /// <summary>
+    /// Abstraktni trida reprezentujici stavovy automat v aplikaci.
+    /// </summary>
+    internal abstract class StateMachine
+    {
+        /// <summary>
+        /// Aktualni stav stavoveho automatu.
+        /// </summary>
+        protected IState? CurrentState { get; set; }
 
-		public void Start()
-		{
-			while (CurrentState is not null)
-			{
-				CurrentState.Invoke();
-			}
-		}
+        /// <summary>
+        /// Spusti stavovy automat.
+        /// </summary>
+        public void Start()
+        {
+            while (CurrentState is not null)
+            {
+                CurrentState.Invoke();
+            }
+        }
 
-		public void SetState(IState? state)
-		{
-			CurrentState = state;
-		}
-	}
+        /// <summary>
+        /// Nastavi novy stav stavoveho automatu.
+        /// </summary>
+        /// <param name="state">Novy stav, ktery ma byt nastaven.</param>
+        public void SetState(IState? state)
+        {
+            CurrentState = state;
+        }
+    }
+
 }

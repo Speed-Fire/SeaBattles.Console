@@ -1,7 +1,13 @@
 ﻿namespace SeaBattles.Console.States
 {
-	internal interface IState
-	{
-		void Invoke();
-	}
+    /// <summary>
+    /// Rozhrani pro stav v aplikaci.
+    /// </summary>
+    internal interface IState
+    {
+        /// <summary>
+        /// Metoda pro spusteni stavu.
+        /// </summary>
+        void Invoke();
+    }
 }
