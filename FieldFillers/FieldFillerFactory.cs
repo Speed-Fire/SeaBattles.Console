@@ -2,6 +2,9 @@
 
 namespace SeaBattles.Console.FieldFillers
 {
+    /// <summary>
+    /// Trida poskytujici tovarni metodu pro vytvoreni instance tridy FieldFiller.
+    /// </summary>
     internal static class FieldFillerFactory
     {
         // Bulgarian values
@@ -10,7 +13,11 @@ namespace SeaBattles.Console.FieldFillers
         private const decimal SMALL_PERCENTAGE = 0.2633190062237051900115105355m;
         private const decimal TINY_PERCENTAGE = 0.4594730986637007310880900402m;
 
-
+        /// <summary>
+        /// Vytvori instanci tridy FieldFiller pro zadanou velikost pole.
+        /// </summary>
+        /// <param name="fieldSize">Velikost pole.</param>
+        /// <returns>Instance tridy FieldFiller.</returns>
         public static FieldFiller Create(int fieldSize)
         {
             var shipCount = CalculateShipCount(fieldSize);
@@ -27,6 +34,11 @@ namespace SeaBattles.Console.FieldFillers
         }
 
         // Bulgarian calculation
+        /// <summary>
+        /// Vypocita pocet lodi na zaklade velikosti pole.
+        /// </summary>
+        /// <param name="fieldSize">Velikost pole.</param>
+        /// <returns>Pocet lodi.</returns>
         private static int CalculateShipCount(int fieldSize)
         {
             if (fieldSize < 10)

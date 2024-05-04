@@ -1,8 +1,14 @@
 ﻿namespace SeaBattles.Console.Misc
 {
+    /// <summary>
+    /// Struktura pro uchovani souradnic.
+    /// </summary>
     public record Coords(int X, int Y);
 
-    enum Quadrant : int
+    /// <summary>
+    /// Vyctovy typ pro urceni kvadrantu.
+    /// </summary>
+    public enum Quadrant : int
     {
         FIRST,
         SECOND,
@@ -10,8 +16,16 @@
         FOURTH
     }
 
+    /// <summary>
+    /// Staticka trida pro generovani souradnic pro pocitacove pole.
+    /// </summary>
     internal static class ComputerFieldCoordsGenerator
     {
+        /// <summary>
+        /// Generuje souradnice na zaklade velikosti pole.
+        /// </summary>
+        /// <param name="fieldSize">Velikost pole.</param>
+        /// <returns>Souradnice.</returns>
         public static Coords Generate(int fieldSize)
         {
             var quadrant = GetQuadrant();
@@ -45,12 +59,16 @@
             if (x >= fieldSize)
                 x = fieldSize - 1;
 
-            if(y >= fieldSize) 
+            if (y >= fieldSize)
                 y = fieldSize - 1;
 
             return new Coords(x, y);
         }
 
+        /// <summary>
+        /// Ziska nahodny kvadrant.
+        /// </summary>
+        /// <returns>Kvadrant.</returns>
         private static Quadrant GetQuadrant()
         {
             var rand = new Random();
