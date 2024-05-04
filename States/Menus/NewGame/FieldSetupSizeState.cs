@@ -4,7 +4,7 @@ using SeaBattles.Console.Models;
 namespace SeaBattles.Console.States.Menus
 {
     /// <summary>
-    /// Trida reprezentujici stav nastaveni velikosti hraci plochy.
+    /// Trida reprezentujici stav nastaveni velikosti hraciho pole.
     /// </summary>
     internal class FieldSetupSizeState : UserInputState<Game>
     {
@@ -26,7 +26,7 @@ namespace SeaBattles.Console.States.Menus
         #region Drawing
 
         /// <summary>
-        /// Metoda pro vykresleni uzivatelskeho rozhrani pro nastaveni velikosti hraci plochy.
+        /// Metoda pro vykresleni uzivatelskeho rozhrani pro nastaveni velikosti hraciho pole.
         /// </summary>
         protected override void Draw()
         {
@@ -43,6 +43,11 @@ namespace SeaBattles.Console.States.Menus
 
         #region Input handlers
 
+        /// <summary>
+        /// Pokusi zparsit velikost pole do intu, a pokud to bylo uspesne,
+        ///  prevede automat na novy stav.
+        /// </summary>
+        /// <param name="input"></param>
         private void GetSize(string input)
         {
             if (int.TryParse(input, out var size)
@@ -57,6 +62,9 @@ namespace SeaBattles.Console.States.Menus
             }
         }
 
+        /// <summary>
+        /// Vrati do hlavniho menu.
+        /// </summary>
         private void Exit()
         {
             SetState(new MainMenuState(StateMachine));

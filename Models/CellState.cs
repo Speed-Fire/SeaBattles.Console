@@ -1,7 +1,7 @@
 ﻿namespace SeaBattles.Console
 {
     /// <summary>
-    /// Vycet reprezentujici stav bunky na herni plose.
+    /// Vycet reprezentujici stav bunky na hracim poli.
     /// </summary>
     public enum CellState
     {

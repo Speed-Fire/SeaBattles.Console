@@ -4,8 +4,17 @@ using System.Text;
 
 namespace SeaBattles.Console.Level
 {
+	/// <summary>
+	/// Castecna trida pro serializaci urovne.
+	/// </summary>
 	internal partial class LevelSerializer
 	{
+		/// <summary>
+		/// Serializuje data urovne do souboru.
+		/// </summary>
+		/// <param name="levelData">Data urovne k ulozeni.</param>
+		/// <param name="path">Cesta k souboru pro ulozeni.</param>
+		/// <returns>True, pokud se uroven uspesne ulozila; jinak false.</returns>
 		public static bool Serialize(LevelData levelData, string path)
 		{
 			var sb = new StringBuilder();
@@ -32,6 +41,9 @@ namespace SeaBattles.Console.Level
 
 		#region Header
 
+		/// <summary>
+		/// Vytvari blok hlavicky urovne.
+		/// </summary>
 		private static void CreateHeaderBlock(LevelData levelData, StringBuilder sb)
 		{
 			sb.AppendLine($"{BLOCK_START} {BLOCK_HEADER}")
@@ -51,6 +63,9 @@ namespace SeaBattles.Console.Level
 
 		#region Battlefields
 
+		/// <summary>
+		/// Vytvari blok hraciho pole.
+		/// </summary>
 		private static void CreateFieldBlock(BattleField field, StringBuilder sb, string blockName)
 		{
 			sb.AppendLine(blockName)
@@ -70,11 +85,17 @@ namespace SeaBattles.Console.Level
 			  .AppendLine();
 		}
 
+		/// <summary>
+		/// Vytvari blok hraciho pole hrace urovne.
+		/// </summary>
 		private static void CreateUserFieldBlock(LevelData levelData, StringBuilder sb)
 		{
 			CreateFieldBlock(levelData.UserField, sb, $"{BLOCK_START} {BLOCK_USER_FIELD}");
 		}
 
+		/// <summary>
+		/// Vytvari blok hraciho pole pocitace urovne.
+		/// </summary>
 		private static void CreateCompFieldBlock(LevelData levelData, StringBuilder sb)
 		{
 			CreateFieldBlock(levelData.CompField, sb, $"{BLOCK_START} {BLOCK_COMP_FIELD}");
@@ -84,6 +105,9 @@ namespace SeaBattles.Console.Level
 
 		#region AI
 
+		/// <summary>
+		/// Vytvari blok umele inteligence urovne.
+		/// </summary>
 		private static void CreateAIBlock(LevelData levelData, StringBuilder sb)
 		{
 			AIPlayerNormal.LastLucklyAttack? data = null;
@@ -110,6 +134,9 @@ namespace SeaBattles.Console.Level
 
 		#region Hints
 
+		/// <summary>
+		/// Vytvari blok napoved urovne.
+		/// </summary>
 		private static void CreateHintsBlock(LevelData levelData, StringBuilder sb)
 		{
 			sb.AppendLine($"{BLOCK_START} {BLOCK_HINTS}")

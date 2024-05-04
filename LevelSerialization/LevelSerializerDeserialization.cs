@@ -4,11 +4,20 @@ using SeaBattles.Console.Models;
 
 namespace SeaBattles.Console.Level
 {
+	/// <summary>
+	/// Zahlavu urovne obsahujici velikost hraciho pole a obtiznost.
+	/// </summary>
 	internal record LevelHeader(/*DateTime DateTime,*/
 		int Size, Difficulty Difficulty);
 
+	/// <summary>
+	/// Castecna trida pro serializaci urovne.
+	/// </summary>
 	internal partial class LevelSerializer
 	{
+		/// <summary>
+		/// Pomocna trida pro docasne ulozeni dat o napovedich.
+		/// </summary>
 		private class HintsData
 		{
 			public int RemainingHintCount { get; }
@@ -21,6 +30,11 @@ namespace SeaBattles.Console.Level
 			}
 		}
 
+		/// <summary>
+		/// Deserializuje data urovne ze souboru.
+		/// </summary>
+		/// <param name="path">Cesta k souboru k deserializaci.</param>
+		/// <returns>Deserializovana data urovne nebo null, pokud selze deserializace.</returns>
 		public static LevelData? Deserialize(string path)
 		{
 			try
@@ -53,6 +67,11 @@ namespace SeaBattles.Console.Level
 			}
 		}
 
+		/// <summary>
+		/// Deserializuje data z hlavicky urovne ze souboru.
+		/// </summary>
+		/// <param name="path">Cesta k souboru k deserializaci.</param>
+		/// <returns>Deserializovane data z hlavicky urovne nebo null, pokud selze deserializace.</returns>
 		public static LevelHeader? DeserializeHeader(string path)
 		{
 			try
@@ -73,6 +92,11 @@ namespace SeaBattles.Console.Level
 
 		#region Block data getting
 
+		/// <summary>
+		/// Ziskej bloky ze souboru.
+		/// </summary>
+		/// <param name="path">Cesta k souboru.</param>
+		/// <returns>Slovnik obsahujici jmena bloku a odpovidajici data.</returns>
 		private static Dictionary<string, string> GetBlocks(string path)
 		{
 			var strs = File.ReadAllText(path).Split(BLOCK_START,
@@ -103,6 +127,11 @@ namespace SeaBattles.Console.Level
 			return blocks;
 		}
 
+		/// <summary>
+		/// Ziskej data z bloku.
+		/// </summary>
+		/// <param name="block">Blok, ze ktereho ziskavame data.</param>
+		/// <returns>Slovnik obsahujici data z bloku.</returns>
 		private static Dictionary<string, string> GetBlockData(string block)
 		{
 			var data = new Dictionary<string, string>();
@@ -129,6 +158,11 @@ namespace SeaBattles.Console.Level
 
 		#region Block readings
 
+		/// <summary>
+		/// Cti blok hlavicky urovne.
+		/// </summary>
+		/// <param name="block">Data bloku hlavicky.</param>
+		/// <returns>Deserializovana hlavicka urovne.</returns>
 		private static LevelHeader ReadHeaderBlock(string block)
 		{
 			var data = GetBlockData(block);
@@ -140,12 +174,18 @@ namespace SeaBattles.Console.Level
 			return new(/*datetime, */size, difficulty);
 		}
 
+		/// <summary>
+		/// Cti blok umele inteligence urovne.
+		/// </summary>
+		/// <param name="block">Data bloku umele inteligence.</param>
+		/// <returns>Deserializovana data umele inteligence.</returns>
 		private static AIPlayerNormal.LastLucklyAttack? ReadAIBlock(string block)
 		{
 			var data = GetBlockData(block);
 
 			var hasData = bool.Parse(data[BLOCK_AI_HAS_DATA]);
 
+			// pokud neni data o poslednim uspesnem utoku, vrati null.
 			if (!hasData)
 				return null;
 
@@ -162,6 +202,11 @@ namespace SeaBattles.Console.Level
 			};
 		}
 
+		/// <summary>
+		/// Cti blok hraciho pole urovne.
+		/// </summary>
+		/// <param name="block">Data bloku hraciho pole.</param>
+		/// <returns>Deserializovane hraci pole.</returns>
 		private static BattleField ReadBattleFieldBlock(string block)
 		{
 			var data = GetBlockData(block);
@@ -173,6 +218,7 @@ namespace SeaBattles.Console.Level
 				.Select(x => int.Parse(x))
 				.ToList();
 
+			// prevod retezcu do dvoudimenzionalniho pole.
 			var field = new CellState[size, size];
 
 			for(int i = 0; i < size; i++)
@@ -183,11 +229,17 @@ namespace SeaBattles.Console.Level
 				}
 			}
 
+			// generuje pomocne pole pro vypocet zbyvajiciich lodi.
 			var (shipCountField, ships) = FieldShipCalculator.CreateShipCountField(size, field);
 
 			return new(size, field, shipCountField, ships);
 		}
 
+		/// <summary>
+		/// Cti blok s napovedmi urovne.
+		/// </summary>
+		/// <param name="block">Data bloku s napovedmi.</param>
+		/// <returns>Deserializovana data napovedi.</returns>
 		private static HintsData ReadHintsBlock(string block)
 		{
 			var data = GetBlockData(block);

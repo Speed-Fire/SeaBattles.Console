@@ -26,8 +26,14 @@ namespace SeaBattles.Console.States.Menus
 
         #region Input handlers
 
+        /// <summary>
+        /// Pokusi zparsit obtiznost UI, a pokud to bylo uspesne,
+        ///  prevede automat na novy stav.
+        /// </summary>
+        /// <param name="input"></param>
         private void SetAI(string input)
         {
+            // parsovani a kontrola vstupu.
             var val = int.Parse(input);
 
             if (val < 1 || val > 3)
@@ -45,9 +51,13 @@ namespace SeaBattles.Console.States.Menus
                 _ => Difficulty.Hard
             };
 
+            // prechod na stav tvorby hraciho pole.
             SetState(new FieldCreatingState(StateMachine, _setup));
         }
 
+        /// <summary>
+        /// Vrati do hlavniho menu.
+        /// </summary>
         private void Exit()
         {
             SetState(new MainMenuState(StateMachine));

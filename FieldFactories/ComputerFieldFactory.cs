@@ -5,7 +5,7 @@ using SeaBattles.Console.Models;
 namespace SeaBattles.Console.FieldFactories
 {
     /// <summary>
-    /// Tovarna na vytvareni bojovych ploch pro pocitacoveho protihrace.
+    /// Tovarna na vytvareni hracih poli pro pocitacoveho protihrace.
     /// </summary>
     internal class ComputerFieldFactory : IFieldFactory
     {
@@ -13,12 +13,12 @@ namespace SeaBattles.Console.FieldFactories
 
         private readonly Random _random = new();
 
-        /// <summary>
-        /// Vytvori bojove pole na zaklade zadaneho nastaveni.
-        /// </summary>
-        /// <param name="setup">Nastaveni pole.</param>
-        /// <returns>Bojove pole.</returns>
-        public BattleField CreateBattlefield(FieldSetup setup)
+		/// <summary>
+		/// Vytvori hraci pole na zaklade zadaneho nastaveni.
+		/// </summary>
+		/// <param name="setup">Nastaveni pole.</param>
+		/// <returns>Hraci pole.</returns>
+		public BattleField CreateBattlefield(FieldSetup setup)
         {
             while (true)
             {
@@ -28,19 +28,31 @@ namespace SeaBattles.Console.FieldFactories
 
                 while (filler.AvailableShips.Any())
                 {
+                    // volba souradnic
                     var (x, y) = ChooseCoords(setup.Size);
 
+                    // volba velikosti
                     var size = ChooseSize(filler);
 
+                    // volba smeru
                     var direction = ChooseDirection();
 
+                    // pokus umisteni lode.
+                    //  pokud neni mozne rozmistit lod, zvysi pocet chyb
                     if (!filler.PutShip(x, y, size, direction))
                         badIter++;
+                    //  pokud lod je uspesne rozmistena, vynyluje pocet chyb
+                    else
+                        badIter = 0;
 
+                    // pokud pocet chyb prekrocil max povoleny pocet chyb,
+                    //  pak ukonci tento cyklus.
                     if (badIter == MAX_BAD_SHIP_PLACING)
                         break;
                 }
 
+                // pokud byly rozmistene vsechny lodi, ukonci tvorbu;
+                //  jinak smaze pole, a zascne rosmistet lodi znovu.
                 if (!filler.AvailableShips.Any())
                     return filler.Build();
             }

@@ -3,27 +3,27 @@
 namespace SeaBattles.Console
 {
     /// <summary>
-    /// Trida reprezentujici bitevni pole.
+    /// Trida reprezentujici hraci pole.
     /// </summary>
     public class BattleField
     {
         /// <summary>
-        /// Pole obsahujici stav jednotlivych bunk na bitevnim poli.
+        /// Pole obsahujici stav jednotlivych bunek na hracim poli.
         /// </summary>
         public CellState[,] Field { get; }
 
         /// <summary>
-        /// Velikost bitevniho pole.
+        /// Velikost hraciho pole.
         /// </summary>
         public int Size { get; }
 
         /// <summary>
-        /// Pocet lodi na bitevnim poli.
+        /// Pocet lodi na hraci poli.
         /// </summary>
         public int ShipCount => _ships.Count;
 
         /// <summary>
-        /// Indikuje, zda je bitevni pole prazdne (neobsahuje zadne lode).
+        /// Indikuje, zda je hraci pole prazdne (neobsahuje zadne lode).
         /// </summary>
         public bool IsEmpty => ShipCount == 0;
 
@@ -55,15 +55,16 @@ namespace SeaBattles.Console
         }
 
         /// <summary>
-        /// Indexer pro pristup k bunecnemu stavu na zaslaných souradnicích.
+        /// Indexer pro pristup k bunecnemu stavu na zaslanych souradnicich.
         /// </summary>
         public CellState this[int x, int y] => Field[x, y];
 
         /// <summary>
-        /// Provede utok na zadanou bunku na bitevnim poli.
+        /// Provede utok na zadanou bunku na hracim poli.
         /// </summary>
         internal AttackResult Attack(uint x, uint y)
         {
+            // vyvola Exception, pokud souradnice nejsou mezi pole.
             if (x >= Size || y >= Size)
                 throw new ArgumentOutOfRangeException();
 
@@ -71,20 +72,25 @@ namespace SeaBattles.Console
 
             switch (Field[x, y])
             {
+                // bunka byla prazdna.
                 case CellState.Empty:
                     Field[x, y] = CellState.Attacked;
                     return AttackResult.Missed;
 
+                // bunka jiz byla utocena.
                 case CellState.Attacked:
                 case CellState.Destroyed:
                     return AttackResult.Failed;
 
+                // v bunke byla lod
                 case CellState.Ship:
                     Field[x, y] = CellState.Destroyed;
                     ShipCellCount--;
 
+                    // prepocita pocet zbyvajicich lodi.
                     RecalculateShipCount(x, y);
 
+                    // na zaklade zmeny poctu lodi, vrati Porazeni anebo Zniceni.
                     return shipCount == ShipCount ? AttackResult.Hitten : AttackResult.Destroyed;
             }
 
@@ -155,7 +161,7 @@ namespace SeaBattles.Console
         }
 
         /// <summary>
-        /// Prevede stav bitevniho pole na retezec.
+        /// Prevede stav hraciho pole na retezec.
         /// </summary>
         public override string ToString()
         {

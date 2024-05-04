@@ -17,7 +17,7 @@
     }
 
     /// <summary>
-    /// Staticka trida pro generovani souradnic pro pocitacove pole.
+    /// Staticka trida pro generovani souradnic.
     /// </summary>
     internal static class ComputerFieldCoordsGenerator
     {
@@ -28,6 +28,7 @@
         /// <returns>Souradnice.</returns>
         public static Coords Generate(int fieldSize)
         {
+            // nahodna volba kvadrantu
             var quadrant = GetQuadrant();
 
             var halfSize = fieldSize / 2;
@@ -51,11 +52,13 @@
                     break;
             }
 
+            // generovani souradnic ve zvolenem kvadrantu.
             var rand = new Random();
 
             x += rand.Next(0, fieldSize - halfSize);
             y += rand.Next(0, fieldSize - halfSize);
 
+            // osetreni chyb
             if (x >= fieldSize)
                 x = fieldSize - 1;
 

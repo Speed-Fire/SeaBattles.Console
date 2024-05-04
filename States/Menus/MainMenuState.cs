@@ -3,7 +3,7 @@
 namespace SeaBattles.Console.States.Menus
 {
     /// <summary>
-    /// Třída reprezentující hlavní menu ve hře.
+    /// Trida reprezentujici hlavni menu ve hre.
     /// </summary>
     internal class MainMenuState : UserInputState<Game>
     {
@@ -15,7 +15,7 @@ namespace SeaBattles.Console.States.Menus
         #region Drawing
 
         /// <summary>
-        /// Metoda pro vykreslení hlavního menu.
+        /// Metoda pro vykresleni hlavniho menu.
         /// </summary>
         protected override void Draw()
         {
@@ -33,9 +33,9 @@ namespace SeaBattles.Console.States.Menus
         #region Initialization
 
         /// <summary>
-        /// Metoda pro inicializaci zpracování vstupu pro hlavní menu.
+        /// Metoda pro inicializaci zpracovani vstupu pro hlavni menu.
         /// </summary>
-        /// <param name="inputHandler">Instance třídy InputHandler pro registraci tokenů.</param>
+        /// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
         protected override void InitInputHandler(InputHandler inputHandler)
         {
             inputHandler.Add(@"^1$", (_) => { SetState(new FieldSetupSizeState(StateMachine)); });

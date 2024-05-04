@@ -14,7 +14,7 @@ namespace SeaBattles.Console.FieldFillers
         private readonly Dictionary<ShipSize, int> _availableShips;
 
         /// <summary>
-        /// Dostupne lodě, které mohou být umístěny na poli.
+        /// Dostupne lodě, ktere mohou být umístěny na poli.
         /// </summary>
         public IReadOnlyDictionary<ShipSize, int> AvailableShips => _availableShips;
 
@@ -57,6 +57,7 @@ namespace SeaBattles.Console.FieldFillers
         /// <returns>True, pokud byla lod uspesne umistena, jinak False.</returns>
         public bool PutShip(int leftCornerX, int leftCornerY, ShipSize size, ShipDirection direction)
         {
+            // ukonci, pokud dosly lodi zvolene velikosti.
             if (!AvailableShips.ContainsKey(size) || AvailableShips[size] <= 0)
                 return false;
 
@@ -68,9 +69,11 @@ namespace SeaBattles.Console.FieldFillers
             if (direction == ShipDirection.Horizontal)
                 (dirX, dirY) = (dirY, dirX);
 
+            // kontrola moznosti rozmisteni lode v techto souradnicich.
             if (!IsCellSuitableForShip(leftCornerX, leftCornerY, length, dirX, dirY))
                 return false;
 
+            // rozmisteni lode.
             for (int i = 0; i < length; i++)
             {
                 var x = leftCornerX + i * dirX;
@@ -79,6 +82,7 @@ namespace SeaBattles.Console.FieldFillers
                 _field[x, y] = CellState.Ship;
             }
 
+            // uprava poctu zbyvajicich lodi.
             _availableShips[size]--;
 
             if (_availableShips[size] == 0)
@@ -100,8 +104,10 @@ namespace SeaBattles.Console.FieldFillers
         /// <returns>True, pokud je bunka vhodna pro umisteni lod, jinak False.</returns>
         private bool IsCellSuitableForShip(int x, int y, int length, int dirX, int dirY)
         {
+            // relativne souradnice bunek kolem tehle, vcetne ji same.
             var pairs = new (int, int)[] { (0, 0), (1, 1), (0, 1), (1, 0), (-1, -1), (0, -1), (-1, 0), (1, -1), (-1, 1) };
 
+            // kontrola pro celou lod, nejen pro puvodne zvolenou bunku.
             for (int i = 0; i < length; i++)
             {
                 var startX = x + i * dirX;
@@ -109,20 +115,25 @@ namespace SeaBattles.Console.FieldFillers
 
                 foreach (var pair in pairs)
                 {
+                    // volba bunky
                     var shiftedX = startX + pair.Item1;
                     var shiftedY = startY + pair.Item2;
 
                     var isXoutOfSize = IsOutOfSize(shiftedX);
                     var isYoutOfSize = IsOutOfSize(shiftedY);
 
-
+                    // pokracuje, pokud souradnice jsou mimo pole 
+                    //  a zaroven bunka neni bunkou pro lod.
                     if ((pair.Item1 != 0 && isXoutOfSize) ||
                         (pair.Item2 != 0 && isYoutOfSize))
                         continue;
 
+                    // ukonci, pokud souradnice jsou mimo pole
+                    //  a bunka je urcen pro lod.
                     if (isXoutOfSize || isYoutOfSize)
                         return false;
 
+                    // ukonci, pokud zvolena bunka neni prazdna.
                     if (_field[shiftedX, shiftedY] != CellState.Empty)
                         return false;
                 }

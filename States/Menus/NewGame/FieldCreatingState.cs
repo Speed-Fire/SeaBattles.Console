@@ -6,7 +6,7 @@ using SeaBattles.Console.Models;
 namespace SeaBattles.Console.States.Menus
 {
     /// <summary>
-    /// Stav tvorby herního pole.
+    /// Stav tvorby hraciho pole.
     /// </summary>
     internal class FieldCreatingState : UserInputState<Game>
     {
@@ -16,19 +16,24 @@ namespace SeaBattles.Console.States.Menus
         private const string REGEX_EXIT = "^konc$";
         private const string REGEX_CONTINUE = "^.*$";
 
+        // nastaveni pole.
         private readonly FieldSetup _fieldSetup;
 
         private readonly InputToken _continueToken;
+
+        // metody pro pridani a odstraneni tokenu osetreni vstupu
+        //  po ukoncene inicializace.
         private Action<InputToken>? AddToken;
         private Action<InputToken>? RemoveToken;
 
+        // trida pro plneni pole.
         private FieldFiller _filler;
 
         /// <summary>
         /// Konstruktor pro stav tvorby pole.
         /// </summary>
         /// <param name="game">Hra.</param>
-        /// <param name="fieldSetup">Nastavení pole.</param>
+        /// <param name="fieldSetup">Nastaveni pole.</param>
         public FieldCreatingState(Game game, FieldSetup fieldSetup)
             : base(game)
         {
@@ -42,41 +47,46 @@ namespace SeaBattles.Console.States.Menus
         #region Drawing
 
         /// <summary>
-        /// Metoda pro vykreslení stavu tvorby pole.
+        /// Metoda pro vykresleni stavu tvorby pole.
         /// </summary>
         protected override void Draw()
         {
+            // pokud vsechny lode jsou rozmisteny na poli,
+            //  povoli uzivatelovi pokracovat dal.
             if (!_filler.AvailableShips.Any())
                 AddToken?.Invoke(_continueToken);
 
             System.Console.Clear();
-            System.Console.WriteLine($"Postupně zadávejte pozice levého" +
-                $" horního rohu vaší lodi, její směr " +
-                $"a rozměr:");
+            System.Console.WriteLine($"Postupne zadavejte pozice leveho" +
+                $" horniho rohu vasi lodi, jeji smer " +
+                $"a rozmer:");
             System.Console.WriteLine();
-            System.Console.WriteLine("Dostupné směry:");
-            System.Console.WriteLine($"   Svislá ({ShipCoordinateParser.CHAR_VERTICAL_DIRECTION})");
-            System.Console.WriteLine($"   Vodorovná ({ShipCoordinateParser.CHAR_HORIZONTAL_DIRECTION})");
+            System.Console.WriteLine("Dostupne smery:");
+            System.Console.WriteLine($"   Svisla ({ShipCoordinateParser.CHAR_VERTICAL_DIRECTION})");
+            System.Console.WriteLine($"   Vodorovna ({ShipCoordinateParser.CHAR_HORIZONTAL_DIRECTION})");
             System.Console.WriteLine();
-            System.Console.WriteLine("Dostupné lodě:");
+            System.Console.WriteLine("Dostupne lode:");
             PrintAvailableShips();
             System.Console.WriteLine();
-            System.Console.WriteLine($"Příklad: a1 {ShipCoordinateParser.CHAR_VERTICAL_DIRECTION}" +
+            System.Console.WriteLine($"Priklad: a1 {ShipCoordinateParser.CHAR_VERTICAL_DIRECTION}" +
                 $" {ShipCoordinateParser.CHAR_SHIP_LARGE}");
 
             System.Console.WriteLine();
             _filler.Draw();
             System.Console.WriteLine();
-            System.Console.WriteLine("Pokud chcete vyčistit plochu, zadejte \'smaz\'.");
+            System.Console.WriteLine("Pokud chcete vycistit plochu, zadejte \'smaz\'.");
             System.Console.WriteLine();
-            System.Console.WriteLine("Pokud se chcete vrátit do hlavního menu, zadejte \'konc\'.");
+            System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
             if (_filler.AvailableShips.Any())
                 return;
 
             System.Console.WriteLine();
-            System.Console.WriteLine("Pokračujte stiskem cokoliv jiného.");
+            System.Console.WriteLine("Pokracujte stiskem cokoliv jineho.");
         }
 
+        /// <summary>
+        /// Vypise zbyvajici pripustne lode.
+        /// </summary>
         private void PrintAvailableShips()
         {
             System.Console.Write("   ");
@@ -89,7 +99,7 @@ namespace SeaBattles.Console.States.Menus
                         System.Console.Write($"Malý ({ShipCoordinateParser.CHAR_SHIP_TINY}): {pair.Value};  ");
                         break;
                     case ShipSize.Small:
-                        System.Console.Write($"Střední ({ShipCoordinateParser.CHAR_SHIP_SMALL}): {pair.Value};  ");
+                        System.Console.Write($"Stredni ({ShipCoordinateParser.CHAR_SHIP_SMALL}): {pair.Value};  ");
                         break;
                     case ShipSize.Medium:
                         System.Console.Write($"Velký ({ShipCoordinateParser.CHAR_SHIP_MEDIUM}): {pair.Value};  ");
@@ -108,9 +118,9 @@ namespace SeaBattles.Console.States.Menus
         #region Input handlers
 
         /// <summary>
-        /// Metoda pro umístění lodi na herní pole na základě vstupu.
+        /// Metoda pro umisteni lodi na hracim poli na zaklade vstupu.
         /// </summary>
-        /// <param name="input">Vstup od uživatele.</param>
+        /// <param name="input">Vstup od uzivatele.</param>
         private void PutShip(string input)
         {
             if (ShipCoordinateParser.TryParse(input, _filler.Size, out var x, out var y,
@@ -126,7 +136,7 @@ namespace SeaBattles.Console.States.Menus
         }
 
         /// <summary>
-        /// Metoda pro vyčištění herního pole.
+        /// Metoda pro vycisteni herniho pole.
         /// </summary>
         private void ClearField()
         {
@@ -136,7 +146,7 @@ namespace SeaBattles.Console.States.Menus
         }
 
         /// <summary>
-        /// Metoda pro dokončení tvorby pole a přechod do hry.
+        /// Metoda pro dokonceni tvorby pole a prechod do hry.
         /// </summary>
         private void BuildField()
         {
@@ -149,21 +159,22 @@ namespace SeaBattles.Console.States.Menus
         }
 
         /// <summary>
-        /// Metoda pro návrat do hlavního menu.
+        /// Metoda pro navrat do hlavniho menu.
         /// </summary>
         private void Exit()
         {
             SetState(new MainMenuState(StateMachine));
         }
 
-        #endregion
+		#endregion
 
-        #region Initialization
+		#region Initialization
 
-        /// <summary>
-        /// Inicializace obslužného handleru pro vstup.
-        /// </summary>
-        protected override void InitInputHandler(InputHandler inputHandler)
+		/// <summary>
+		/// Metoda pro inicializaci zpracovani vstupu pro tvorbu hraciho pole.
+		/// </summary>
+		/// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
+		protected override void InitInputHandler(InputHandler inputHandler)
         {
             inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
             inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });

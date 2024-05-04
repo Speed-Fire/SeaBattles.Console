@@ -1,27 +1,27 @@
 ﻿namespace SeaBattles.Console
 {
     /// <summary>
-    /// Výčet reprezentující výsledek útoku na loď.
+    /// Vycet reprezentujici vysledek utoku na lod.
     /// </summary>
     internal enum AttackResult
     {
         /// <summary>
-        /// Neúspěšný útok.
+        /// Neuspesny utok.
         /// </summary>
         Failed,
 
         /// <summary>
-        /// Útok minul loď.
+        /// Utok minul lod.
         /// </summary>
         Missed,
 
         /// <summary>
-        /// Loď byla zasažena.
+        /// Lod byla zasazena.
         /// </summary>
         Hitten,
 
         /// <summary>
-        /// Loď byla zasažena a zničena.
+        /// Lod byla zasazena a znicena.
         /// </summary>
         Destroyed
     }

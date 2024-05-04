@@ -2,13 +2,16 @@
 
 namespace SeaBattles.Console.AI
 {
-	[DataContract]
 	internal class AIPlayerEasy : AIPlayer
 	{
 		public AIPlayerEasy(BattleField field) : base(field)
 		{
 		}
 
+		/// <summary>
+		/// Provadi utok a vraci vysledek.
+		/// </summary>
+		/// <returns>Vysledek utoku.</returns>
 		public override AttackResult Attack()
 		{
 			var (x, y) = GetRandomCoords();

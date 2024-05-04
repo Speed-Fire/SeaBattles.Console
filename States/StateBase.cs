@@ -1,35 +1,35 @@
 ﻿namespace SeaBattles.Console.States
 {
     /// <summary>
-    /// Abstraktní třída pro základní stav v aplikaci.
+    /// Abstraktni trida pro zakladni stav v aplikaci.
     /// </summary>
-    /// <typeparam name="TStateMachine">Typ stavového automatu.</typeparam>
+    /// <typeparam name="TStateMachine">Typ stavoveho automatu.</typeparam>
     internal abstract class StateBase<TStateMachine> : IState
         where TStateMachine : StateMachine
     {
         /// <summary>
-        /// Stavový automat, který tento stav používá.
+        /// Stavovy automat, ktery tento stav pouziva.
         /// </summary>
         protected TStateMachine StateMachine { get; }
 
         /// <summary>
-        /// Konstruktor třídy StateBase.
+        /// Konstruktor tridy StateBase.
         /// </summary>
-        /// <param name="stateMachine">Stavový automat, který tento stav používá.</param>
+        /// <param name="stateMachine">Stavovy automat, ktery tento stav pouziva.</param>
         protected StateBase(TStateMachine stateMachine)
         {
             StateMachine = stateMachine;
         }
 
         /// <summary>
-        /// Metoda pro spuštění tohoto stavu.
+        /// Metoda pro spusteni tohoto stavu.
         /// </summary>
         public abstract void Invoke();
 
         /// <summary>
-        /// Metoda pro nastavení nového stavu v rámci stavového automatu.
+        /// Metoda pro nastaveni noveho stavu v ramci stavoveho automatu.
         /// </summary>
-        /// <param name="state">Nový stav, který má být nastaven.</param>
+        /// <param name="state">Novy stav, ktery ma byt nastaven.</param>
         protected void SetState(StateBase<TStateMachine>? state)
         {
             StateMachine.SetState(state);

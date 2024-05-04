@@ -3,6 +3,9 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
+	/// <summary>
+	/// Trida reprezentujici stav tahu uzivatele.
+	/// </summary>
 	internal class PlayerMoveState : UserInputState<Console.Engine>
 	{
 		private const string REGEX_SAVE_AND_EXIT = "^uloz$";
@@ -19,6 +22,9 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Drawing
 
+		/// <summary>
+		/// Metoda pro vykresleni stavu tahu uzivatele.
+		/// </summary>
 		protected override void Draw()
 		{
 			System.Console.Clear();
@@ -56,15 +62,23 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Input handlers
 
+		/// <summary>
+		/// Pokusi utocit nejakou bunku.
+		/// </summary>
+		/// <param name="input"></param>
 		private void TakeMove(string input)
 		{
-			if (!ShipCoordinateParser.TryParse(input, StateMachine.LevelData.CompField.Size, out var x, out var y))
+			// parsovani a kontrola vstupu
+			if (!ShipCoordinateParser
+				.TryParse(input, StateMachine.LevelData.CompField.Size, out var x, out var y))
 			{
 				StateMsg = MSG_BAD_INPUT;
 
 				return;
 			}
 
+			// kontrola stavu bunky, na kterou se pokusil utocit uzivatel:
+			//   pokud je uz utocena anebo znicena, pak hlasi spatny vstup.
 			if (StateMachine.LevelData.CompField[x, y] == CellState.Attacked ||
 				StateMachine.LevelData.CompField[x, y] == CellState.Destroyed)
 			{
@@ -73,8 +87,11 @@ namespace SeaBattles.Console.States.Engine
 				return;
 			}
 
+			// utok
 			var res = StateMachine.LevelData.CompField.Attack((uint)x, (uint)y);
 
+			// kdyz po uteku nezbyva zadna lod na pocitacovem poli, pak
+			//  prevede automat na stav vyhry.
 			if (StateMachine.LevelData.CompField.IsEmpty)
 			{
 				SetState(new VictoryState(StateMachine, Console.Engine.MSG_SHIP_DESTROYED));
@@ -84,19 +101,28 @@ namespace SeaBattles.Console.States.Engine
 
 			switch (res)
 			{
+				// neco se stalo spatne pri utoku.
 				case AttackResult.Failed:
 				default:
 					StateMsg = MSG_BAD_INPUT;
 
 					return;
+
+				// v bunce nebylo lode.
+				//  preved automat na stav vysledku tahu uzivatele.
 				case AttackResult.Missed:
-					StateMachine.SetState(new PlayerMoveResultState(StateMachine, Console.Engine.MSG_FIRE_MISSED));
+					StateMachine
+						.SetState(new PlayerMoveResultState(StateMachine, Console.Engine.MSG_FIRE_MISSED));
 
 					return;
+
+				// lod byla porazena po utoku.
 				case AttackResult.Hitten:
 					_moveMsg = Console.Engine.MSG_SHIP_HIT;
 
 					return;
+
+				// lod byla znicena po utoku.
 				case AttackResult.Destroyed:
 					_moveMsg = Console.Engine.MSG_SHIP_DESTROYED;
 
@@ -104,11 +130,17 @@ namespace SeaBattles.Console.States.Engine
 			}
 		}
 
+		/// <summary>
+		/// Prevede automat na stav ulozeni hry.
+		/// </summary>
 		private void SaveAndExit()
 		{
 			SetState(new SavingState(StateMachine));
 		}
 
+		/// <summary>
+		/// Pouzije napoved
+		/// </summary>
 		private void UseHint()
 		{
 			if (StateMachine.LevelData.RemainingHintCount <= 0)
@@ -123,6 +155,9 @@ namespace SeaBattles.Console.States.Engine
 			}
 		}
 
+		/// <summary>
+		/// Vrati do hlavniho menu.
+		/// </summary>
 		private void Exit()
 		{
 			SetState(null);
@@ -132,6 +167,10 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Initialization
 
+		/// <summary>
+		/// Metoda pro inicializaci zpracovani vstupu pro stav tahu uzivatele.
+		/// </summary>
+		/// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
 		protected override void InitInputHandler(InputHandler inputHandler)
 		{
 			inputHandler.Add(REGEX_MOVE, TakeMove);

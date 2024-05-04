@@ -1,17 +1,17 @@
 ﻿namespace SeaBattles.Console.Models
 {
     /// <summary>
-    /// Třída reprezentující nastavení hracího pole.
+    /// Trida reprezentujici nastaveni hraciho pole.
     /// </summary>
     internal class FieldSetup
     {
         /// <summary>
-        /// Velikost hracího pole.
+        /// Velikost hraciho pole.
         /// </summary>
         public int Size { get; set; }
 
         /// <summary>
-        /// Obtížnost hry.
+        /// Obtiznost hry.
         /// </summary>
         public Difficulty Difficulty { get; set; }
     }

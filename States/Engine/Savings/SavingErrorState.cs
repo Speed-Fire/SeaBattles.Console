@@ -2,7 +2,10 @@
 
 namespace SeaBattles.Console.States.Engine
 {
-    internal class SavingErrorState : UserInputState<Console.Engine>
+	/// <summary>
+	/// Trida reprezentujici stav chyby pri ulozeni hry.
+	/// </summary>
+	internal class SavingErrorState : UserInputState<Console.Engine>
     {
         public SavingErrorState(Console.Engine engine)
             : base(engine)
@@ -12,6 +15,9 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Drawing
 
+		/// <summary>
+		/// Metoda pro vykresleni stavu chyby pri ulozeni hry.
+		/// </summary>
 		protected override void Draw()
         {
             System.Console.Clear();
@@ -29,6 +35,10 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Initialization
 
+		/// <summary>
+		/// Metoda pro inicializaci zpracovani vstupu pro stav chyby pri ulozeni hry.
+		/// </summary>
+		/// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
 		protected override void InitInputHandler(InputHandler inputHandler)
         {
             inputHandler.Add(@"^a$", (_) => { SetState(new PlayerMoveState(StateMachine)); });

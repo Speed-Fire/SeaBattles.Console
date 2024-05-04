@@ -12,6 +12,7 @@ namespace SeaBattles.Console.States.Menus
         private readonly BattleField _userField;
         private readonly FieldSetup _fieldSetup;
 
+        // tovarna pro tvorbu pocitacoveho hraciho pole.
         private readonly IFieldFactory _fieldFactory;
 
         /// <summary>

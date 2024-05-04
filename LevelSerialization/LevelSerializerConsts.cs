@@ -1,13 +1,11 @@
 ﻿namespace SeaBattles.Console.Level
 {
+	/// <summary>
+	/// Castecna trida pro serializaci urovne.
+	/// </summary>
 	internal partial class LevelSerializer
 	{
-		private static readonly string DIRECTORY = Path.Combine(Directory.GetCurrentDirectory(), "Saves");
-
-		private const string DATETIME_FORMAT = "yyyy.MM.dd HH:mm:ss";
-
-		private const string SAVE_NAME_TEMPLATE = "seabattle";
-		private const string SAVE_NAME_SEARCH_PATTERN = $"{SAVE_NAME_TEMPLATE}*";
+		// zahlavi bloku a parametru
 
 		private const string BLOCK_START = "==>";
 		private const string BLOCK_HEADER = "HEADER";
@@ -16,7 +14,6 @@
 		private const string BLOCK_USER_FIELD = "USER_FIELD";
 		private const string BLOCK_COMP_FIELD = "COMP_FIELD";
 
-		private const string BLOCK_HEADER_DATETIME = "DateTime";
 		private const string BLOCK_HEADER_DIFFICULTY = "Difficulty";
 		private const string BLOCK_HEADER_SIZE = "Size";
 

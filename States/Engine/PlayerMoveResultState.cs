@@ -3,6 +3,9 @@ using SeaBattles.Console.Misc;
 
 namespace SeaBattles.Console.States.Engine
 {
+	/// <summary>
+	/// Trida reprezentujici stav vysledku tahu uzivatele.
+	/// </summary>
 	internal class PlayerMoveResultState : UserInputState<Console.Engine>
 	{
 		private readonly string _moveMsg;
@@ -15,6 +18,9 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Drawing
 
+		/// <summary>
+		/// Metoda pro vykresleni stavu vysledku tahu uzivatele.
+		/// </summary>
 		protected override void Draw()
 		{
 			System.Console.Clear();
@@ -37,7 +43,6 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine($"  Pocitacova plocha:");
 			System.Console.WriteLine();
 
-			// set false only to debug purpose
 			BattlefieldDrawer.Draw(StateMachine.LevelData.CompField, true, StateMachine.LevelData.Hints);
 
 			System.Console.WriteLine();
@@ -53,6 +58,10 @@ namespace SeaBattles.Console.States.Engine
 
 		#region Initialization
 
+		/// <summary>
+		/// Metoda pro inicializaci zpracovani vstupu pro stav vysledku tahu uzivatele.
+		/// </summary>
+		/// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
 		protected override void InitInputHandler(InputHandler inputHandler)
 		{
 			inputHandler.Add("^.*$", (_) => { SetState(new AIMoveState(StateMachine)); });

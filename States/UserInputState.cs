@@ -3,9 +3,9 @@
 namespace SeaBattles.Console.States
 {
     /// <summary>
-    /// Abstraktní třída reprezentující stav uživatelského vstupu v aplikaci.
+    /// Abstraktni trida reprezentujici stav uzivatelskeho vstupu v aplikaci.
     /// </summary>
-    /// <typeparam name="TStateMachine">Typ stavového automatu.</typeparam>
+    /// <typeparam name="TStateMachine">Typ stavoveho automatu.</typeparam>
     internal abstract class UserInputState<TStateMachine> : StateBase<TStateMachine>
         where TStateMachine : StateMachine
     {
@@ -20,6 +20,7 @@ namespace SeaBattles.Console.States
             {
                 var tmp = _stateMsg;
 
+                // automaticke mazani stavajici zpravy o chybe pri jeji ziskani.
                 _stateMsg = string.Empty;
 
                 return tmp;
@@ -32,9 +33,9 @@ namespace SeaBattles.Console.States
         }
 
         /// <summary>
-        /// Konstruktor abstraktní třídy UserInputState.
+        /// Konstruktor abstraktni tridy UserInputState.
         /// </summary>
-        /// <param name="stateMachine">Stavový automat, který tento stav používá.</param>
+        /// <param name="stateMachine">Stavovy automat, ktery tento stav pouziva.</param>
         public UserInputState(TStateMachine stateMachine) : base(stateMachine)
         {
             _inputHandler = new();
@@ -45,7 +46,7 @@ namespace SeaBattles.Console.States
         }
 
         /// <summary>
-        /// Metoda pro spuštění tohoto stavu.
+        /// Metoda pro spusteni tohoto stavu.
         /// </summary>
         public override void Invoke()
         {
@@ -77,14 +78,14 @@ namespace SeaBattles.Console.States
         }
 
         /// <summary>
-        /// Metoda pro vykreslení informací spojených s tímto stavem.
+        /// Metoda pro vykresleni informaci spojenych s timto stavem.
         /// </summary>
         protected abstract void Draw();
 
         /// <summary>
-        /// Metoda pro inicializaci zpracování vstupu.
+        /// Metoda pro inicializaci zpracovani vstupu.
         /// </summary>
-        /// <param name="inputHandler">Instance třídy InputHandler pro registraci tokenů.</param>
+        /// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
         protected abstract void InitInputHandler(InputHandler inputHandler);
     }
 

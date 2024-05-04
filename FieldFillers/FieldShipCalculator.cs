@@ -6,10 +6,10 @@
     internal static class FieldShipCalculator
     {
         /// <summary>
-        /// Vytvori pole poctu lodi a slovnik lodi na zaklade zadaneho pole stavu bunek.
+        /// Vytvori pole poctu lodi a slovnik lodi na zaklade zadaneho pole.
         /// </summary>
         /// <param name="size">Velikost pole.</param>
-        /// <param name="field">Pole stavu bunek.</param>
+        /// <param name="field">Pole.</param>
         /// <returns>Koruplat tvoreny pocty lodi a slovnikem lodi.</returns>
         public static (int[,], Dictionary<int, int>) CreateShipCountField(int size, CellState[,] field)
         {
@@ -22,6 +22,7 @@
             {
                 for (int j = 0; j < size; j++)
                 {
+                    // pokud v bunce je nezaznamena lod, zaznamena ji.
                     if (field[i, j] == CellState.Ship && shipCountField[i, j] == 0)
                     {
                         InitShip(size, field, ships, shipCountField, i, j, number);
@@ -49,12 +50,15 @@
             in Dictionary<int, int> ships, in int[,] shipCountField,
             int x, int y, int number)
         {
+            // ukonci, pokud souradnice jsou mimo pole.
             if (x < 0 || y < 0 || x >= size || y >= size)
                 return;
 
+            // ukonci, pokud v bunce neni lod anebo lod je jiz zaznamena.
             if (field[x, y] != CellState.Ship || shipCountField[x, y] != 0)
                 return;
 
+            // zaznameni
             shipCountField[x, y] = number;
 
             if (!ships.ContainsKey(number))
@@ -62,6 +66,7 @@
 
             ships[number]++;
 
+            // pokracuje v bunkach kolem tehle.
             InitShip(size, field, ships, shipCountField, x + 1, y, number);
             InitShip(size, field, ships, shipCountField, x - 1, y, number);
             InitShip(size, field, ships, shipCountField, x, y + 1, number);
