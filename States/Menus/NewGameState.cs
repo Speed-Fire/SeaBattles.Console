@@ -9,6 +9,8 @@ namespace SeaBattles.Console.States.Menus
     /// </summary>
     internal class NewGameState : StateBase<Game>
     {
+        private const int MIN_HINT_COUNT = 3;
+
         private readonly BattleField _userField;
         private readonly FieldSetup _fieldSetup;
 
@@ -37,7 +39,8 @@ namespace SeaBattles.Console.States.Menus
         {
             var compField = _fieldFactory.CreateBattlefield(_fieldSetup);
 
-            var levelData = new LevelData(GetAI(_userField), _userField, compField);
+            var levelData = new LevelData(GetAI(_userField), _userField, compField,
+                MIN_HINT_COUNT + (_userField.Size - 7));
 
             var engine = new Console.Engine(levelData);
 

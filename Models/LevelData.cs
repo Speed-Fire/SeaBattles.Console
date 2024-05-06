@@ -59,14 +59,16 @@ namespace SeaBattles.Console.Models
 		/// <param name="aI">AI hrac.</param>
 		/// <param name="userField">Hraci pole uzivatele.</param>
 		/// <param name="compField">Hraci pole pocitace.</param>
-		public LevelData(AIPlayer aI, BattleField userField, BattleField compField)
+		/// <param name="remainingHintCount">Zbyvajici pocet napovedi.</param>
+		public LevelData(AIPlayer aI, BattleField userField, BattleField compField,
+			int remainingHintCount)
 		{
 			AI = aI;
 			UserField = userField;
 			CompField = compField;
 
 			_hints = new();
-			RemainingHintCount = 3;
+			RemainingHintCount = remainingHintCount;
 		}
 
 		/// <summary>
