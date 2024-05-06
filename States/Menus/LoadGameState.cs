@@ -80,7 +80,7 @@ namespace SeaBattles.Console.States.Menus
 			// parsovani a kontrola vstupu.
 			var number = int.Parse(input) - 1;
 
-			if(number >= _saves.Count)
+			if(number >= _saves.Count || number < 0)
 			{
 				StateMsg = MSG_BAD_INPUT;
 				return;
@@ -114,7 +114,7 @@ namespace SeaBattles.Console.States.Menus
 			// parsovani a kontrola vstupu.
 			var number = int.Parse(input.Substring(3).Trim()) - 1;
 
-			if (number >= _saves.Count)
+			if (number >= _saves.Count || number < 0)
 			{
 				StateMsg = MSG_BAD_INPUT;
 				return;
