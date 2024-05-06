@@ -25,8 +25,6 @@ namespace SeaBattles.Console.States.Engine
 		{
 			System.Console.Clear();
 
-			System.Console.WriteLine();
-
 			var color = System.Console.ForegroundColor;
 
 			System.Console.ForegroundColor = ConsoleColor.DarkRed;

@@ -32,7 +32,7 @@ namespace SeaBattles.Console.States.Menus
         {
             System.Console.Clear();
 
-            System.Console.WriteLine("Zadejte velikost plochy:");
+            System.Console.WriteLine("Zadejte velikost pole:");
             System.Console.WriteLine($"   min: {MIN_FIELD_SIZE};   max: {MAX_FIELD_SIZE}");
 
             System.Console.WriteLine();
