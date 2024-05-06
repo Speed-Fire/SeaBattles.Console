@@ -51,7 +51,7 @@ namespace SeaBattles.Console.States.Menus
 
 			PrintBlock("4. Napovedi: ");
 			System.Console.WriteLine("Hrac muze vyuzit napoved behem sveho tahu.");
-			System.Console.WriteLine("              Maximalni poveleny pocet napovedi: 3.");
+			System.Console.WriteLine("              Maximalni poveleny pocet napovedi: 3 + velikost pole - 7");
 			System.Console.WriteLine();
 
 			PrintBlock("5. Vitezstvi: ");
