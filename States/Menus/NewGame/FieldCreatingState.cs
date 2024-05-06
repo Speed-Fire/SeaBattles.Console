@@ -1,4 +1,5 @@
-﻿using SeaBattles.Console.FieldFillers;
+﻿using SeaBattles.Console.FieldFactories;
+using SeaBattles.Console.FieldFillers;
 using SeaBattles.Console.Input;
 using SeaBattles.Console.Misc;
 using SeaBattles.Console.Models;
@@ -11,10 +12,17 @@ namespace SeaBattles.Console.States.Menus
     internal class FieldCreatingState : UserInputState<Game>
     {
         // Regex pro validaci lodi
-        private const string REGEX_SHIP = @"^[a-zA-Z]\s*\d{1,2}\s*[sv]\s*[lmst]$";
+        private readonly string REGEX_SHIP = @"^[a-zA-Z]\s*\d{1,2}\s*[sv]\s*[" + 
+            ShipCoordinateParser.CHAR_SHIP_TINY +
+			ShipCoordinateParser.CHAR_SHIP_SMALL +
+			ShipCoordinateParser.CHAR_SHIP_MEDIUM +
+			ShipCoordinateParser.CHAR_SHIP_LARGE + "]$";
         private const string REGEX_CLEAR = "^smaz$";
         private const string REGEX_EXIT = "^konc$";
+        private const string REGEX_AUTO = "^auto$";
         private const string REGEX_CONTINUE = "^.*$";
+
+        private readonly IFieldFactory _fieldFactory = new ComputerFieldFactory();
 
         // nastaveni pole.
         private readonly FieldSetup _fieldSetup;
@@ -68,14 +76,14 @@ namespace SeaBattles.Console.States.Menus
             System.Console.WriteLine("Dostupne lode:");
             PrintAvailableShips();
             System.Console.WriteLine();
-            System.Console.WriteLine($"Priklad: a1 {ShipCoordinateParser.CHAR_VERTICAL_DIRECTION}" +
+            System.Console.WriteLine($"Priklad pro svislou obrovskou lod v bunce a1: a1 {ShipCoordinateParser.CHAR_VERTICAL_DIRECTION}" +
                 $" {ShipCoordinateParser.CHAR_SHIP_LARGE}");
 
             System.Console.WriteLine();
             _filler.Draw();
             System.Console.WriteLine();
             System.Console.WriteLine("Pokud chcete vycistit plochu, zadejte \'smaz\'.");
-            System.Console.WriteLine();
+            System.Console.WriteLine("Pokud chcete automaticky naplnit pole, zadejte \'auto\'");
             System.Console.WriteLine("Pokud se chcete vratit do hlavniho menu, zadejte \'konc\'.");
             if (_filler.AvailableShips.Any())
                 return;
@@ -96,16 +104,16 @@ namespace SeaBattles.Console.States.Menus
                 switch (pair.Key)
                 {
                     case ShipSize.Tiny:
-                        System.Console.Write($"Malý ({ShipCoordinateParser.CHAR_SHIP_TINY}): {pair.Value};  ");
+                        System.Console.Write($"Mala ({ShipCoordinateParser.CHAR_SHIP_TINY}): {pair.Value};  ");
                         break;
                     case ShipSize.Small:
                         System.Console.Write($"Stredni ({ShipCoordinateParser.CHAR_SHIP_SMALL}): {pair.Value};  ");
                         break;
                     case ShipSize.Medium:
-                        System.Console.Write($"Velký ({ShipCoordinateParser.CHAR_SHIP_MEDIUM}): {pair.Value};  ");
+                        System.Console.Write($"Velka ({ShipCoordinateParser.CHAR_SHIP_MEDIUM}): {pair.Value};  ");
                         break;
                     case ShipSize.Large:
-                        System.Console.Write($"Obrovský ({ShipCoordinateParser.CHAR_SHIP_LARGE}): {pair.Value};  ");
+                        System.Console.Write($"Obrovska ({ShipCoordinateParser.CHAR_SHIP_LARGE}): {pair.Value};  ");
                         break;
                 }
             }
@@ -159,6 +167,14 @@ namespace SeaBattles.Console.States.Menus
         }
 
         /// <summary>
+        /// Automaticky naplni pole.
+        /// </summary>
+        private void AutoFill()
+        {
+            _filler = _fieldFactory.CreateFilledFiller(_fieldSetup);
+        }
+
+        /// <summary>
         /// Metoda pro navrat do hlavniho menu.
         /// </summary>
         private void Exit()
@@ -178,6 +194,7 @@ namespace SeaBattles.Console.States.Menus
         {
             inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
             inputHandler.Add(REGEX_CLEAR, (_) => { ClearField(); });
+            inputHandler.Add(REGEX_AUTO, (_) => { AutoFill(); });
             inputHandler.Add(REGEX_SHIP, PutShip);
 
             AddToken = (token) => { inputHandler.Add(token); };

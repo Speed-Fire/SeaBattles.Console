@@ -40,7 +40,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine($"    {StateMachine.LevelData.UserField.ShipCount,-2}               {StateMachine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"  Vase plocha:");
+			System.Console.WriteLine($"  Vase pole:");
 			System.Console.WriteLine();
 
 			BattlefieldDrawer.Draw(StateMachine.LevelData.UserField, false);

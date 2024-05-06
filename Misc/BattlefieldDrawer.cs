@@ -11,6 +11,11 @@
         private const char CELL_ATTACKED = '҉';
         private const char CELL_DESTROYED = '†';
 
+        private const ConsoleColor CELL_EMPTY_COLOR = ConsoleColor.Blue;
+        private const ConsoleColor CELL_DESTROYED_COLOR = ConsoleColor.DarkRed;
+        private const ConsoleColor CELL_HINT_COLOR = ConsoleColor.DarkYellow;
+        private const ConsoleColor CELL_ATTACKED_COLOR = ConsoleColor.Cyan;
+
 		/// <summary>
 		/// Vykresli hraci pole.
 		/// </summary>
@@ -44,8 +49,10 @@
 
 			for (int i = 0; i < size; i++)
             {
-                // vypise svisla cisla(zde jiz pismena) bunek.
-                System.Console.Write((char)('a' + i));
+				System.Console.ForegroundColor = color;
+
+				// vypise svisla cisla(zde jiz pismena) bunek.
+				System.Console.Write((char)('a' + i));
                 System.Console.Write(' ');
 
                 // vypise obsah pole
@@ -55,15 +62,20 @@
                     {
                         // prazdna bunka.
                         case CellState.Empty:
-                            System.Console.Write(CELL_EMPTY);
+                            System.Console.ForegroundColor = CELL_EMPTY_COLOR;
+
+							System.Console.Write(CELL_EMPTY);
                             break;
 
                         // obsahujici lod bunka.
                         case CellState.Ship:
-                            // pokud zvoleno ukryti lodi, a neexistuje zadna napoveda
-                            //  k teto bunce, zobrzi bunku jako prazdnou.
+							System.Console.ForegroundColor = color;
+
+							// pokud zvoleno ukryti lodi, a neexistuje zadna napoveda
+							//  k teto bunce, zobrzi bunku jako prazdnou.
 							if (hideShips && (hints is null || !hints.Contains((i, j))))
                             {
+								System.Console.ForegroundColor = CELL_EMPTY_COLOR;
 								System.Console.Write(CELL_EMPTY);
 							}
                             // jinak zobrazi skutecny obsah bunky.
@@ -72,7 +84,7 @@
                                 // pokud zobrazovani obsahu je diky napovedi,
                                 //  pak zmeni barvu na zlutou.
 								if (hints is not null && hints.Contains((i, j)))
-                                    System.Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                    System.Console.ForegroundColor = CELL_HINT_COLOR;
 
 								System.Console.Write(CELL_SHIP);
 
@@ -83,7 +95,7 @@
 
                         // utocena bunka.
                         case CellState.Attacked:
-                            System.Console.ForegroundColor = ConsoleColor.Cyan;
+                            System.Console.ForegroundColor = CELL_ATTACKED_COLOR;
 
 							System.Console.Write(CELL_ATTACKED);
 
@@ -92,7 +104,7 @@
 
                         // bunka se znicenou lode.
                         case CellState.Destroyed:
-							System.Console.ForegroundColor = ConsoleColor.DarkRed;
+							System.Console.ForegroundColor = CELL_DESTROYED_COLOR;
 
 							System.Console.Write(CELL_DESTROYED);
 
@@ -103,6 +115,9 @@
 
                 System.Console.WriteLine();
             }
-        }
+
+            System.Console.ForegroundColor = color;
+
+		}
     }
 }

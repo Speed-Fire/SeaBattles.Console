@@ -39,7 +39,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '=') + exitTipStr);
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"Napovedy: {StateMachine.LevelData.RemainingHintCount}. {(StateMachine.LevelData.RemainingHintCount > 0 ? "Pis \'nap\'" : string.Empty)}");
+			System.Console.WriteLine($"Napovedi: {StateMachine.LevelData.RemainingHintCount}. {(StateMachine.LevelData.RemainingHintCount > 0 ? "Pis \'nap\'" : string.Empty)}");
 			System.Console.WriteLine();
 
 			System.Console.WriteLine("Zbyva lodi:");
@@ -47,7 +47,7 @@ namespace SeaBattles.Console.States.Engine
 			System.Console.WriteLine($"    {StateMachine.LevelData.UserField.ShipCount,-2}               {StateMachine.LevelData.CompField.ShipCount,-2}");
 
 			System.Console.WriteLine();
-			System.Console.WriteLine($"  Pocitacova plocha:");
+			System.Console.WriteLine($"  Pocitacove pole:");
 			System.Console.WriteLine();
 
 			BattlefieldDrawer.Draw(StateMachine.LevelData.CompField, true, StateMachine.LevelData.Hints); // set false only to debug purpose

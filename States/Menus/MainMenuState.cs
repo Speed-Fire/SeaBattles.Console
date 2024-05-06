@@ -21,12 +21,44 @@ namespace SeaBattles.Console.States.Menus
         {
             System.Console.Clear();
 
-            System.Console.WriteLine("    Vitam Vas ve hre Lode!");
-            System.Console.WriteLine("Zvolte prosim cislo pro pokracovani:");
-            System.Console.WriteLine("1. Nova hra");
-            System.Console.WriteLine("2. Nahrat hru");
-            System.Console.WriteLine("3. Pravidla");
-            System.Console.WriteLine("4. Staci");
+            //System.Console.WriteLine(@"
+            //                     |__
+            //    _________ )____/|____/\_____________
+            //        \           / |                /  \
+            //      ================================|---|
+            //         ( O )---------( O )          \__/");
+
+
+
+            System.Console.WriteLine();
+
+			System.Console.WriteLine(@"     ░░░░░░░░░░░░░░░▄▄░░░░░░░░░░░░░░░
+     ░░░░░░░░░░░░░░████░░░░░░░░░░░░░░
+     ░░░░░░░░░░░░░░████░░░░░░░░░░░░░░
+     ░░░░░▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄░░░░░
+     ░░░░░██░░░░░░░░░░░░░░░░░░██░░░░░
+     ░░░░░██▄▄░░▄▄░░▄▄░░▄▄░░▄▄██░░░░░
+     ░░░░░░░▀█░░██░░██░░██░░█▀░░░░░░░
+     ░░░░░░░░█░░░░░░░░░░░░░░█░░░░░░░░
+     ░░░░░░░░▀░▄▄▄██░░██▄▄▄░▀░░░░░░░░
+     ░░░░▄▄▄████████░░████████▄▄▄░░░░
+     ░░░████████████░░████▀███████░░░
+     ░░░░███████████░░███▄░▄█████░░░░
+     ░░░░░██████████░░██▀█░█▀███░░░░░
+     ░░░░░░█████████░░███▄▄▄███░░░░░░
+     ░░░░░░░████████░░████████░░░░░░░
+     ░░░░░░░▀░░░▀██▀░░▀██▀░░░▀░░░░░░░
+     ▄▄███▄▄▄███▄▄▄▄██▄▄▄▄███▄▄▄███▄▄
+     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
+
+			System.Console.WriteLine();
+
+			System.Console.WriteLine("       Vitam Vas ve hre Lode!");
+            System.Console.WriteLine("   Zvolte prosim cislo pro pokracovani:");
+            System.Console.WriteLine("   1. Nova hra");
+            System.Console.WriteLine("   2. Nahrat hru");
+            System.Console.WriteLine("   3. Pravidla");
+            System.Console.WriteLine("   4. Staci");
         }
 
         #endregion

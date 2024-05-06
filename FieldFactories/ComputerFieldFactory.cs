@@ -9,7 +9,7 @@ namespace SeaBattles.Console.FieldFactories
     /// </summary>
     internal class ComputerFieldFactory : IFieldFactory
     {
-        private const int MAX_BAD_SHIP_PLACING = 3;
+        private const int MAX_BAD_SHIP_PLACING = 10;
 
         private readonly Random _random = new();
 
@@ -20,42 +20,9 @@ namespace SeaBattles.Console.FieldFactories
 		/// <returns>Hraci pole.</returns>
 		public BattleField CreateBattlefield(FieldSetup setup)
         {
-            while (true)
-            {
-                var badIter = 0;
+			var filler = CreateFilledFiller(setup);
 
-                var filler = FieldFillerFactory.Create(setup.Size);
-
-                while (filler.AvailableShips.Any())
-                {
-                    // volba souradnic
-                    var (x, y) = ChooseCoords(setup.Size);
-
-                    // volba velikosti
-                    var size = ChooseSize(filler);
-
-                    // volba smeru
-                    var direction = ChooseDirection();
-
-                    // pokus umisteni lode.
-                    //  pokud neni mozne rozmistit lod, zvysi pocet chyb
-                    if (!filler.PutShip(x, y, size, direction))
-                        badIter++;
-                    //  pokud lod je uspesne rozmistena, vynyluje pocet chyb
-                    else
-                        badIter = 0;
-
-                    // pokud pocet chyb prekrocil max povoleny pocet chyb,
-                    //  pak ukonci tento cyklus.
-                    if (badIter == MAX_BAD_SHIP_PLACING)
-                        break;
-                }
-
-                // pokud byly rozmistene vsechny lodi, ukonci tvorbu;
-                //  jinak smaze pole, a zascne rosmistet lodi znovu.
-                if (!filler.AvailableShips.Any())
-                    return filler.Build();
-            }
+			return filler.Build();
         }
 
         /// <summary>
@@ -94,5 +61,52 @@ namespace SeaBattles.Console.FieldFactories
 
             return (res.X, res.Y);
         }
-    }
+
+		/// <summary>
+		/// Vytvori uz naplneny naplnovac pole na zaklade nastaveni.
+		/// </summary>
+		/// <param name="setup">Nastaveni pole.</param>
+		/// <returns>Naplneny naplnovac.</returns>
+		public FieldFiller CreateFilledFiller(FieldSetup setup)
+		{
+			while (true)
+			{
+				var badIter = 0;
+
+				var filler = FieldFillerFactory.Create(setup.Size);
+
+				while (filler.AvailableShips.Any())
+				{
+					// volba souradnic
+					var (x, y) = ChooseCoords(filler.Size);
+
+					// volba velikosti
+					var size = ChooseSize(filler);
+
+					// volba smeru
+					var direction = ChooseDirection();
+
+					// pokus umisteni lode.
+					//  pokud neni mozne rozmistit lod, zvysi pocet chyb
+					if (!filler.PutShip(x, y, size, direction))
+						badIter++;
+					//  pokud lod je uspesne rozmistena, vynyluje pocet chyb
+					else
+						badIter = 0;
+
+					// pokud pocet chyb prekrocil max povoleny pocet chyb,
+					//  pak ukonci tento cyklus.
+					if (badIter == MAX_BAD_SHIP_PLACING * (filler.Size - 6))
+						break;
+				}
+
+				// pokud byly rozmistene vsechny lodi, ukonci tvorbu;
+				//  jinak smaze pole, a zascne rosmistet lodi znovu.
+				if (!filler.AvailableShips.Any())
+				{
+                    return filler;
+				}
+			}
+		}
+	}
 }
