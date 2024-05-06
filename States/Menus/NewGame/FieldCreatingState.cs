@@ -20,7 +20,7 @@ namespace SeaBattles.Console.States.Menus
         private const string REGEX_CLEAR = "^smaz$";
         private const string REGEX_EXIT = "^konc$";
         private const string REGEX_AUTO = "^auto$";
-        private const string REGEX_CONTINUE = "^.*$";
+        private const string REGEX_CONTINUE = "^dal$";
 
         private readonly IFieldFactory _fieldFactory = new ComputerFieldFactory();
 
@@ -31,6 +31,7 @@ namespace SeaBattles.Console.States.Menus
 
         // metody pro pridani a odstraneni tokenu osetreni vstupu
         //  po ukoncene inicializace.
+        private bool _isContinueAllowed = false;
         private Action<InputToken>? AddToken;
         private Action<InputToken>? RemoveToken;
 
@@ -62,7 +63,7 @@ namespace SeaBattles.Console.States.Menus
             // pokud vsechny lode jsou rozmisteny na poli,
             //  povoli uzivatelovi pokracovat dal.
             if (!_filler.AvailableShips.Any())
-                AddToken?.Invoke(_continueToken);
+                AllowContinue();
 
             System.Console.Clear();
             System.Console.WriteLine($"Postupne zadavejte pozice leveho" +
@@ -89,7 +90,7 @@ namespace SeaBattles.Console.States.Menus
                 return;
 
             System.Console.WriteLine();
-            System.Console.WriteLine("Pokracujte stiskem cokoliv jineho.");
+            System.Console.WriteLine("Zadejte \'dal\' pro pokracovani.");
         }
 
         /// <summary>
@@ -150,7 +151,7 @@ namespace SeaBattles.Console.States.Menus
         {
             _filler = FieldFillerFactory.Create(_fieldSetup.Size);
 
-            RemoveToken?.Invoke(_continueToken);
+            ProhibitContinue();
         }
 
         /// <summary>
@@ -180,6 +181,34 @@ namespace SeaBattles.Console.States.Menus
         private void Exit()
         {
             SetState(new MainMenuState(StateMachine));
+        }
+
+		#endregion
+
+		#region Internal
+
+        /// <summary>
+        /// Povoli uzivatelovi pokracovat dal.
+        /// </summary>
+		private void AllowContinue()
+        {
+            if (_isContinueAllowed)
+                return;
+
+			AddToken?.Invoke(_continueToken);
+            _isContinueAllowed = true;
+		}
+
+        /// <summary>
+        /// Zakaze uzivatelovi pokracovat dal.
+        /// </summary>
+        private void ProhibitContinue()
+        {
+            if (!_isContinueAllowed)
+                return;
+
+            RemoveToken?.Invoke(_continueToken);
+            _isContinueAllowed = false;
         }
 
 		#endregion
