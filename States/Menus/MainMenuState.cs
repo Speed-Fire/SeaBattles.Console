@@ -25,7 +25,8 @@ namespace SeaBattles.Console.States.Menus
             System.Console.WriteLine("Zvolte prosim cislo pro pokracovani:");
             System.Console.WriteLine("1. Nova hra");
             System.Console.WriteLine("2. Nahrat hru");
-            System.Console.WriteLine("3. Staci");
+            System.Console.WriteLine("3. Pravidla");
+            System.Console.WriteLine("4. Staci");
         }
 
         #endregion
@@ -40,7 +41,8 @@ namespace SeaBattles.Console.States.Menus
         {
             inputHandler.Add(@"^1$", (_) => { SetState(new FieldSetupSizeState(StateMachine)); });
             inputHandler.Add(@"^2$", (_) => { SetState(new LoadGameState(StateMachine)); });
-            inputHandler.Add(@"^3$", (_) => { SetState(null); });
+            inputHandler.Add(@"^3$", (_) => { SetState(new RulesState(StateMachine)); });
+            inputHandler.Add(@"^4$", (_) => { SetState(null); });
         }
 
         #endregion
