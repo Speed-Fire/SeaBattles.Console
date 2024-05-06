@@ -31,7 +31,7 @@ namespace SeaBattles.Console.States.Engine
 
 			var moveStr = "====    Vas tah    ====";
 
-			var saveTipStr = $"   Pokud chcete ulozit a ukoncit hru, zadejte \'uloz\'.";
+			var saveTipStr = $"   Pokud chcete ulozit hru, zadejte \'uloz\'.";
 			var exitTipStr = "   Pokud chcete ukoncit hru, zadejte \'konc\'.";
 
 			System.Console.WriteLine(string.Empty.PadRight(moveStr.Length, '='));
@@ -133,7 +133,7 @@ namespace SeaBattles.Console.States.Engine
 		/// <summary>
 		/// Prevede automat na stav ulozeni hry.
 		/// </summary>
-		private void SaveAndExit()
+		private void SaveGame()
 		{
 			SetState(new SavingState(StateMachine));
 		}
@@ -175,7 +175,7 @@ namespace SeaBattles.Console.States.Engine
 		{
 			inputHandler.Add(REGEX_MOVE, TakeMove);
 			inputHandler.Add(REGEX_USE_HINT, (_) => { UseHint(); });
-			inputHandler.Add(REGEX_SAVE_AND_EXIT, (_) => { SaveAndExit(); });
+			inputHandler.Add(REGEX_SAVE_AND_EXIT, (_) => { SaveGame(); });
 			inputHandler.Add(REGEX_EXIT, (_) => { Exit(); });
 		}
 

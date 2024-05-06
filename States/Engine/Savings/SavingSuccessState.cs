@@ -39,7 +39,7 @@ namespace SeaBattles.Console.States.Engine
 		/// <param name="inputHandler">Instance tridy InputHandler pro registraci tokenu.</param>
 		protected override void InitInputHandler(InputHandler inputHandler)
 		{
-			inputHandler.Add("^.*$", (_) => { SetState(null); });
+			inputHandler.Add("^.*$", (_) => { SetState(new PlayerMoveState(StateMachine)); });
 		}
 
 		#endregion
